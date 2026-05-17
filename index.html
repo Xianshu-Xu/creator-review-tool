@@ -86,9 +86,9 @@
   .creator-id { font-family:'Space Mono',monospace; font-size:.75rem; color:var(--accent); }
   .creator-post-count { font-family:'Space Mono',monospace; font-size:.7rem; color:var(--text-dim); }
 
-  .card-embeds { flex:1; overflow-y:auto; background:#000; scroll-snap-type:y mandatory; }
+  .card-embeds { flex:1; overflow-y:auto; background:#000; scroll-snap-type:y proximity; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; touch-action:pan-y; }
   .embed-item { scroll-snap-align:start; width:100%; min-height:500px; position:relative; border-bottom:1px solid var(--border); }
-  .embed-item iframe { width:100%; height:500px; border:none; }
+  .embed-item iframe { width:100%; height:500px; border:none; pointer-events:none; }
   .embed-item .loading-placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; height:500px; color:var(--text-dim); font-size:.82rem; gap:.8rem; }
   .embed-item .embed-label { position:absolute; top:8px; left:10px; background:rgba(0,0,0,.7); color:var(--text-dim); font-family:'Space Mono',monospace; font-size:.6rem; padding:2px 8px; border-radius:4px; z-index:5; }
   .embed-more-hint { text-align:center; color:var(--text-dim); font-size:.75rem; padding:.8rem; font-family:'Space Mono',monospace; background:var(--surface2); }
@@ -475,6 +475,12 @@ https://www.tiktok.com/@username2/video/7635405708128816386"></textarea>
   // Keyboard
   document.addEventListener('keydown', e => {
     if (reviewPhase.style.display!=='flex') return;
+    const noteOpen = document.getElementById('note-overlay').classList.contains('open');
+    const isTextEntry = e.target && (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT' || e.target.isContentEditable);
+    if (noteOpen || isTextEntry) {
+      if (e.key === 'Escape' && noteOpen && e.target.id !== 'note-textarea') closeNoteModal();
+      return;
+    }
     if(e.key==='ArrowRight'){e.preventDefault();recordDecision('approve');}
     else if(e.key==='ArrowLeft'){e.preventDefault();recordDecision('reject');}
     else if(e.key==='ArrowUp'){e.preventDefault();recordDecision('skip');}
