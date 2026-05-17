@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Creator Review Tool</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700&family=Space+Mono:wght@400;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #101416;
+    --surface: #182023;
+    --surface2: #202a2d;
+    --border: #314044;
+    --text: #eff7f5;
+    --text-dim: #9aaaab;
+    --approve: #22c55e;
+    --approve-bg: rgba(34,197,94,0.08);
+    --reject: #ef4444;
+    --reject-bg: rgba(239,68,68,0.08);
+    --accent: #4fd1b1;
+    --accent-bg: rgba(79,209,177,0.12);
+  }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); height:100vh; overflow:hidden; display:flex; flex-direction:column; outline:none; }
+
+  #input-phase { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; padding:2rem; animation:fadeIn .4s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+  #input-phase h1 { font-family:'Space Mono',monospace; font-size:1.6rem; margin-bottom:.5rem; letter-spacing:-.5px; }
+  .creator-credit { font-family:'Space Mono',monospace; font-size:.72rem; color:var(--text-dim); margin-bottom:1rem; }
+  #input-phase p.subtitle { color:var(--text-dim); font-size:.82rem; margin-bottom:1.5rem; text-align:center; line-height:1.7; }
+
+  .input-mode-tabs { display:flex; gap:.5rem; margin-bottom:1rem; width:100%; max-width:620px; }
+  .tab-btn { flex:1; padding:.55rem; border:1.5px solid var(--border); background:var(--surface); color:var(--text-dim); border-radius:8px; font-family:'DM Sans',sans-serif; font-size:.8rem; font-weight:600; cursor:pointer; transition:all .2s; }
+  .tab-btn.active { border-color:var(--accent); color:var(--text); background:var(--accent-bg); }
+
+  .input-box { width:100%; max-width:620px; display:none; flex-direction:column; }
+  .input-box.active { display:flex; }
+  .input-box label { font-size:.75rem; color:var(--text-dim); margin-bottom:.4rem; font-family:'Space Mono',monospace; }
+
+  textarea.main-input { width:100%; height:200px; background:var(--surface); border:1.5px solid var(--border); border-radius:12px; color:var(--text); font-family:'Space Mono',monospace; font-size:.78rem; padding:1rem; resize:none; outline:none; transition:border-color .2s; line-height:1.6; }
+  textarea.main-input:focus { border-color:var(--accent); }
+  textarea.main-input::placeholder { color:var(--text-dim); opacity:.5; }
+
+  .format-hint { font-size:.7rem; color:var(--text-dim); margin-top:.5rem; line-height:1.6; font-family:'Space Mono',monospace; opacity:.7; }
+
+  .input-footer { width:100%; max-width:620px; display:flex; justify-content:space-between; align-items:center; margin-top:1rem; }
+  #parsed-count { font-family:'Space Mono',monospace; font-size:.8rem; color:var(--text-dim); }
+  #start-btn { padding:.7rem 2rem; background:var(--accent); color:#fff; border:none; border-radius:8px; font-family:'DM Sans',sans-serif; font-weight:700; font-size:.9rem; cursor:pointer; transition:all .2s; }
+  #start-btn:hover { transform:translateY(-1px); box-shadow:0 4px 20px rgba(129,140,248,.3); }
+  #start-btn:disabled { opacity:.3; cursor:not-allowed; transform:none; box-shadow:none; }
+
+  #review-phase { display:none; flex-direction:column; height:100vh; }
+  .top-bar { display:flex; align-items:center; justify-content:space-between; padding:.7rem 1.2rem; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
+  .progress-info { font-family:'Space Mono',monospace; font-size:.8rem; color:var(--text-dim); }
+  .progress-info span { color:var(--text); font-weight:700; }
+  .stats-row { display:flex; gap:1rem; font-size:.75rem; font-family:'Space Mono',monospace; }
+  .stat-approve { color:var(--approve); }
+  .stat-reject { color:var(--reject); }
+  .stat-skip { color:var(--text-dim); }
+  .progress-bar-track { height:3px; background:var(--surface2); flex-shrink:0; }
+  .progress-bar-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--approve)); transition:width .3s ease; }
+
+  .card-area { flex:1; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; padding:.8rem; }
+
+  .card {
+    width:100%; max-width:480px; height:calc(100vh - 170px); max-height:780px;
+    background:var(--surface); border-radius:16px; border:1px solid var(--border);
+    overflow:hidden; position:relative; user-select:none;
+    transition:transform .06s linear, box-shadow .2s; will-change:transform;
+    display:flex; flex-direction:column;
+  }
+  .card.swiping-left { box-shadow:-8px 0 40px rgba(239,68,68,.15); }
+  .card.swiping-right { box-shadow:8px 0 40px rgba(34,197,94,.15); }
+  .card.exit-left { transition:transform .35s ease-in,opacity .35s ease-in; transform:translateX(-150%) rotate(-15deg)!important; opacity:0; }
+  .card.exit-right { transition:transform .35s ease-in,opacity .35s ease-in; transform:translateX(150%) rotate(15deg)!important; opacity:0; }
+  .card.exit-up { transition:transform .35s ease-in,opacity .35s ease-in; transform:translateY(-150%)!important; opacity:0; }
+
+  .swipe-indicator { position:absolute; top:50%; transform:translateY(-50%); z-index:20; font-weight:700; font-size:1.4rem; padding:.6rem 1.2rem; border-radius:8px; border:3px solid; opacity:0; transition:opacity .15s; pointer-events:none; font-family:'Space Mono',monospace; }
+  .swipe-indicator.approve { right:1.5rem; color:var(--approve); border-color:var(--approve); background:var(--approve-bg); }
+  .swipe-indicator.reject { left:1.5rem; color:var(--reject); border-color:var(--reject); background:var(--reject-bg); }
+
+  .creator-header {
+    padding:.7rem 1rem; background:var(--surface2); border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+  }
+  .creator-id { font-family:'Space Mono',monospace; font-size:.75rem; color:var(--accent); }
+  .creator-post-count { font-family:'Space Mono',monospace; font-size:.7rem; color:var(--text-dim); }
+
+  .card-embeds { flex:1; overflow-y:auto; background:#000; scroll-snap-type:y mandatory; }
+  .embed-item { scroll-snap-align:start; width:100%; min-height:500px; position:relative; border-bottom:1px solid var(--border); }
+  .embed-item iframe { width:100%; height:500px; border:none; }
+  .embed-item .loading-placeholder { display:flex; flex-direction:column; align-items:center; justify-content:center; height:500px; color:var(--text-dim); font-size:.82rem; gap:.8rem; }
+  .embed-item .embed-label { position:absolute; top:8px; left:10px; background:rgba(0,0,0,.7); color:var(--text-dim); font-family:'Space Mono',monospace; font-size:.6rem; padding:2px 8px; border-radius:4px; z-index:5; }
+  .embed-more-hint { text-align:center; color:var(--text-dim); font-size:.75rem; padding:.8rem; font-family:'Space Mono',monospace; background:var(--surface2); }
+
+  .spinner { width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  .card-footer { padding:.6rem 1rem; background:var(--surface); border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+  .card-index { font-family:'Space Mono',monospace; font-size:.75rem; color:var(--text-dim); }
+
+  .controls { display:flex; align-items:center; justify-content:center; gap:1.5rem; padding:.8rem; background:var(--surface); border-top:1px solid var(--border); flex-shrink:0; }
+  .ctrl-btn { width:52px;height:52px;border-radius:50%;border:2px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;font-size:1.3rem; }
+  .ctrl-btn:hover { transform:scale(1.1); }
+  .ctrl-btn.reject-btn:hover { border-color:var(--reject);background:var(--reject-bg); }
+  .ctrl-btn.skip-btn { width:40px;height:40px;font-size:.9rem; }
+  .ctrl-btn.skip-btn:hover { border-color:var(--text-dim); }
+  .ctrl-btn.approve-btn:hover { border-color:var(--approve);background:var(--approve-bg); }
+  .ctrl-btn.undo-btn { width:40px;height:40px;font-size:.85rem; }
+  .ctrl-btn.undo-btn:hover { border-color:var(--accent);background:var(--accent-bg); }
+  .key-hint { font-family:'Space Mono',monospace; font-size:.5rem; color:var(--text-dim); position:absolute; bottom:-16px; left:50%; transform:translateX(-50%); white-space:nowrap; opacity:.6; }
+  .ctrl-wrap { position:relative; }
+
+  #results-phase { display:none; flex-direction:column; height:100vh; padding:2rem; overflow-y:auto; }
+  #results-phase h2 { font-family:'Space Mono',monospace; font-size:1.3rem; margin-bottom:1.5rem; }
+  .results-summary { display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
+  .result-card { flex:1; min-width:120px; padding:1rem; background:var(--surface); border-radius:12px; border:1px solid var(--border); text-align:center; }
+  .result-card .num { font-family:'Space Mono',monospace; font-size:1.8rem; font-weight:700; }
+  .result-card .label { font-size:.78rem; color:var(--text-dim); margin-top:.3rem; }
+  .export-btns { display:flex; gap:.8rem; margin-bottom:2rem; flex-wrap:wrap; }
+  .export-btn { padding:.6rem 1.4rem; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); color:var(--text); font-family:'DM Sans',sans-serif; font-weight:600; font-size:.82rem; cursor:pointer; transition:all .2s; }
+  .export-btn:hover { border-color:var(--accent); background:var(--accent-bg); }
+  .export-btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .export-btn.primary:hover { box-shadow:0 4px 20px rgba(129,140,248,.3); }
+  .result-section { margin-bottom:1.5rem; }
+  .result-section h3 { font-size:.85rem; font-weight:700; margin-bottom:.6rem; display:flex; align-items:center; gap:.5rem; }
+  .result-list { background:var(--surface); border-radius:10px; border:1px solid var(--border); padding:1rem; font-family:'Space Mono',monospace; font-size:.7rem; line-height:1.8; max-height:200px; overflow-y:auto; word-break:break-all; user-select:all; }
+  .restart-btn { margin-top:1rem; padding:.6rem 1.4rem; border-radius:8px; border:1.5px solid var(--border); background:var(--surface); color:var(--text-dim); font-family:'DM Sans',sans-serif; font-size:.85rem; cursor:pointer; transition:all .2s; }
+  .restart-btn:hover { color:var(--text); border-color:var(--text-dim); }
+
+  .note-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:100; display:none; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+  .note-overlay.open { display:flex; }
+  .note-modal { background:var(--surface); border:1px solid var(--border); border-radius:14px; width:90%; max-width:420px; padding:1.2rem; animation:fadeIn .2s ease; }
+  .note-modal h3 { font-family:'Space Mono',monospace; font-size:.85rem; margin-bottom:.3rem; }
+  .note-modal .note-creator-id { font-size:.7rem; color:var(--accent); font-family:'Space Mono',monospace; margin-bottom:.8rem; }
+  .note-modal textarea { width:100%; height:100px; background:var(--surface2); border:1.5px solid var(--border); border-radius:8px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:.82rem; padding:.7rem; resize:none; outline:none; line-height:1.5; }
+  .note-modal textarea:focus { border-color:var(--accent); }
+  .note-modal textarea::placeholder { color:var(--text-dim); opacity:.5; }
+  .note-modal-btns { display:flex; justify-content:flex-end; gap:.5rem; margin-top:.8rem; }
+  .note-modal-btns button { padding:.45rem 1rem; border-radius:6px; border:1.5px solid var(--border); background:var(--surface2); color:var(--text); font-family:'DM Sans',sans-serif; font-size:.8rem; cursor:pointer; transition:all .2s; }
+  .note-modal-btns .note-save { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .note-modal-btns .note-save:hover { box-shadow:0 2px 12px rgba(129,140,248,.3); }
+
+  .note-badge { display:none; background:var(--accent); color:#fff; font-family:'Space Mono',monospace; font-size:.55rem; padding:1px 6px; border-radius:4px; margin-left:.5rem; }
+  .note-badge.has-note { display:inline; }
+
+  .ctrl-btn.note-btn { font-size:.85rem; width:40px; height:40px; }
+  .ctrl-btn.note-btn:hover { border-color:var(--accent); background:var(--accent-bg); }
+  .ctrl-btn.note-btn.has-note { border-color:var(--accent); background:var(--accent-bg); }
+
+  .noted-item { padding:.5rem 0; border-bottom:1px solid var(--border); }
+  .noted-item:last-child { border-bottom:none; }
+  .noted-item .noted-id { color:var(--accent); font-weight:700; }
+  .noted-item .noted-text { color:var(--text-dim); margin-top:.2rem; }
+  .noted-item .noted-decision { font-size:.65rem; margin-left:.5rem; }
+  .results-credit { font-family:'Space Mono',monospace; font-size:.72rem; color:var(--text-dim); margin-top:1.5rem; }
+</style>
+</head>
+<body tabindex="0">
+
+<!-- PHASE 1: INPUT -->
+<div id="input-phase">
+  <h1>⚡ Creator Review Tool</h1>
+  <div class="creator-credit">Created by Xianshu Xu</div>
+  <p class="subtitle">
+    Review creators by swiping — posts from the same creator are grouped together (up to 6)<br>
+    ← Swipe left to reject &nbsp;|&nbsp; Swipe right to approve → &nbsp;|&nbsp; ↑ Swipe up to skip
+  </p>
+
+  <div class="input-mode-tabs">
+    <button class="tab-btn active" data-mode="grouped">Mode A: Paste grouped by Creator</button>
+    <button class="tab-btn" data-mode="flat">Mode B: Paste links (auto-group)</button>
+  </div>
+
+  <div class="input-box active" id="box-grouped">
+    <label>Format: Creator ID on the first line, followed by links. Separate groups with a blank line.</label>
+    <textarea class="main-input" id="input-grouped" placeholder="7636736562406984000
+https://www.tiktok.com/@/video/7636736562406984982
+https://www.tiktok.com/@/video/7636421998280723734
+
+7635405708128816000
+https://www.tiktok.com/@/video/7635405708128816386"></textarea>
+    <div class="format-hint">💡 You can copy-paste author_id + link columns directly from Excel</div>
+  </div>
+
+  <div class="input-box" id="box-flat">
+    <label>One link per line. The tool will auto-group by username in the URL.</label>
+    <textarea class="main-input" id="input-flat" placeholder="https://www.tiktok.com/@username1/video/7636736562406984982
+https://www.tiktok.com/@username1/video/7636421998280723734
+https://www.tiktok.com/@username2/video/7635405708128816386"></textarea>
+    <div class="format-hint">💡 If URLs don't contain a username (e.g. @/video/...), each link becomes its own creator</div>
+  </div>
+
+  <div class="input-footer">
+    <span id="parsed-count">0 creators · 0 links</span>
+    <button id="start-btn" disabled>Start Review</button>
+  </div>
+</div>
+
+<!-- PHASE 2: REVIEW -->
+<div id="review-phase">
+  <div class="top-bar">
+    <div class="progress-info">Creator <span id="current-idx">1</span> / <span id="total-count">0</span></div>
+    <div class="stats-row">
+      <span class="stat-approve">✓ <span id="approve-count">0</span></span>
+      <span class="stat-reject">✗ <span id="reject-count">0</span></span>
+      <span class="stat-skip">⊘ <span id="skip-count">0</span></span>
+    </div>
+  </div>
+  <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+
+  <div class="card-area" id="card-area">
+    <div class="card" id="card">
+      <div class="swipe-indicator approve">Approve ✓</div>
+      <div class="swipe-indicator reject">✗ Reject</div>
+      <div class="creator-header">
+        <span class="creator-id" id="creator-label">Creator</span><span class="note-badge" id="note-badge">📝 noted</span>
+        <span class="creator-post-count" id="creator-post-count">0 posts</span>
+      </div>
+      <div class="card-embeds" id="card-embeds"></div>
+      <div class="card-footer">
+        <span class="card-index" id="card-index">#1</span>
+        <span style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--text-dim);">scroll to see more posts</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl-wrap"><button class="ctrl-btn undo-btn" id="undo-btn" title="Undo (Z)">↩</button><span class="key-hint">Z</span></div>
+    <div class="ctrl-wrap"><button class="ctrl-btn reject-btn" id="reject-btn" title="Reject (←)">✗</button><span class="key-hint">←</span></div>
+    <div class="ctrl-wrap"><button class="ctrl-btn note-btn" id="note-btn" title="Note (N)">📝</button><span class="key-hint">N</span></div>
+    <div class="ctrl-wrap"><button class="ctrl-btn skip-btn" id="skip-btn" title="Skip (↑)">⊘</button><span class="key-hint">↑</span></div>
+    <div class="ctrl-wrap"><button class="ctrl-btn approve-btn" id="approve-btn" title="Approve (→)">✓</button><span class="key-hint">→</span></div>
+    <div class="ctrl-wrap"><button class="ctrl-btn" id="finish-btn" title="Finish (ESC)" style="font-size:.75rem;">Done</button><span class="key-hint">ESC</span></div>
+  </div>
+</div>
+
+<!-- PHASE 3: RESULTS -->
+<div id="results-phase">
+  <h2>📊 Review Complete</h2>
+  <div class="results-summary">
+    <div class="result-card"><div class="num" style="color:var(--approve)" id="r-approve">0</div><div class="label">Approved</div></div>
+    <div class="result-card"><div class="num" style="color:var(--reject)" id="r-reject">0</div><div class="label">Rejected</div></div>
+    <div class="result-card"><div class="num" style="color:var(--text-dim)" id="r-skip">0</div><div class="label">Skipped</div></div>
+    <div class="result-card"><div class="num" style="color:var(--text-dim)" id="r-unreviewed">0</div><div class="label">Unreviewed</div></div>
+  </div>
+  <div class="export-btns">
+    <button class="export-btn primary" id="copy-approved-ids">📋 Copy Approved IDs</button>
+    <button class="export-btn" id="copy-rejected-ids">📋 Copy Rejected IDs</button>
+    <button class="export-btn" id="copy-noted">📋 Copy Noted</button>
+    <button class="export-btn" id="download-csv">⬇ Export CSV</button>
+  </div>
+  <div class="result-section">
+    <h3><span style="color:var(--accent)">📝</span> Noted Creators (Case Study Candidates)</h3>
+    <div class="result-list" id="noted-list">—</div>
+  </div>
+  <div class="result-section">
+    <h3><span style="color:var(--approve)">✓</span> Approved Creators</h3>
+    <div class="result-list" id="approved-list">—</div>
+  </div>
+  <div class="result-section">
+    <h3><span style="color:var(--reject)">✗</span> Rejected Creators</h3>
+    <div class="result-list" id="rejected-list">—</div>
+  </div>
+  <button class="restart-btn" id="restart-btn">← Start Over</button>
+  <div class="results-credit">Created by Xianshu Xu</div>
+</div>
+
+<!-- NOTE MODAL -->
+<div class="note-overlay" id="note-overlay">
+  <div class="note-modal">
+    <h3>📝 Note</h3>
+    <div class="note-creator-id" id="note-modal-creator"></div>
+    <textarea id="note-textarea" placeholder="Jot down thoughts... e.g. unique content style, good case study candidate"></textarea>
+    <div class="note-modal-btns">
+      <button id="note-cancel">Cancel</button>
+      <button class="note-save" id="note-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const MAX_EMBEDS = 6;
+  let creators = [];
+  let currentIdx = 0;
+  let results = {};
+  let notes = {};
+  let historyStack = [];
+  let activeMode = 'grouped';
+
+  const inputPhase = document.getElementById('input-phase');
+  const reviewPhase = document.getElementById('review-phase');
+  const resultsPhase = document.getElementById('results-phase');
+  const card = document.getElementById('card');
+  const cardEmbeds = document.getElementById('card-embeds');
+  const progressFill = document.getElementById('progress-fill');
+
+  // Tabs
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeMode = btn.dataset.mode;
+      document.querySelectorAll('.input-box').forEach(b => b.classList.remove('active'));
+      document.getElementById(activeMode === 'grouped' ? 'box-grouped' : 'box-flat').classList.add('active');
+      updateParsedCount();
+    });
+  });
+
+  function extractVideoId(url) { const m = url.match(/video\/(\d+)/); return m ? m[1] : null; }
+  function extractUsername(url) { const m = url.match(/tiktok\.com\/@([^\/]+)\//); return (m && m[1]) ? m[1] : null; }
+  function isUrl(s) { return /https?:\/\//.test(s) || /tiktok\.com/.test(s); }
+
+  function parseGrouped(text) {
+    const blocks = text.split(/\n\s*\n/);
+    const result = [];
+    for (const block of blocks) {
+      const lines = block.split('\n').map(l => l.trim()).filter(Boolean);
+      if (!lines.length) continue;
+      let id = null, urls = [];
+      for (const line of lines) {
+        if (isUrl(line)) urls.push(line);
+        else if (!id) id = line;
+      }
+      if (urls.length) result.push({ id: id || 'unknown_' + Math.random().toString(36).slice(2,8), urls });
+    }
+    return result;
+  }
+
+  function parseFlat(text) {
+    const lines = text.split('\n').map(l => l.trim()).filter(isUrl);
+    const groups = {};
+    let counter = 0;
+    for (const url of lines) {
+      const key = extractUsername(url) || ('single_' + (counter++));
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(url);
+    }
+    return Object.entries(groups).map(([id, urls]) => ({ id, urls }));
+  }
+
+  function parseInput() {
+    const text = activeMode === 'grouped' ? document.getElementById('input-grouped').value : document.getElementById('input-flat').value;
+    return activeMode === 'grouped' ? parseGrouped(text) : parseFlat(text);
+  }
+
+  function updateParsedCount() {
+    const p = parseInput();
+    const total = p.reduce((s, c) => s + c.urls.length, 0);
+    document.getElementById('parsed-count').textContent = `${p.length} creators · ${total} links`;
+    document.getElementById('start-btn').disabled = p.length === 0;
+  }
+
+  document.getElementById('input-grouped').addEventListener('input', updateParsedCount);
+  document.getElementById('input-flat').addEventListener('input', updateParsedCount);
+
+  document.getElementById('start-btn').addEventListener('click', () => {
+    creators = parseInput();
+    if (!creators.length) return;
+    currentIdx = 0; results = {}; notes = {}; historyStack = [];
+    showPhase('review');
+    loadCard(0);
+    updateStats();
+  });
+
+  function showPhase(p) {
+    inputPhase.style.display = p === 'input' ? 'flex' : 'none';
+    reviewPhase.style.display = p === 'review' ? 'flex' : 'none';
+    resultsPhase.style.display = p === 'results' ? 'flex' : 'none';
+  }
+
+  function loadCard(idx) {
+    if (idx >= creators.length) { showResults(); return; }
+    currentIdx = idx;
+    const cr = creators[idx];
+    document.getElementById('current-idx').textContent = idx + 1;
+    document.getElementById('total-count').textContent = creators.length;
+    document.getElementById('card-index').textContent = '#' + (idx + 1);
+    document.getElementById('creator-label').textContent = cr.id;
+    document.getElementById('creator-post-count').textContent = cr.urls.length + ' posts';
+    progressFill.style.width = ((idx / creators.length) * 100) + '%';
+
+    card.style.transform = '';
+    card.classList.remove('exit-left','exit-right','exit-up','swiping-left','swiping-right');
+
+    const show = cr.urls.slice(0, MAX_EMBEDS);
+    const rest = cr.urls.length - show.length;
+    let html = '';
+    show.forEach((url, i) => {
+      const vid = extractVideoId(url);
+      if (vid) {
+        html += `<div class="embed-item">
+          <span class="embed-label">${i+1} / ${cr.urls.length}</span>
+          <div class="loading-placeholder" id="ldr-${idx}-${i}"><div class="spinner"></div><span>Loading...</span></div>
+          <iframe src="https://www.tiktok.com/embed/v2/${vid}" allow="encrypted-media" allowfullscreen tabindex="-1"
+            style="display:none"
+            onload="this.style.display='block';var l=document.getElementById('ldr-${idx}-${i}');if(l)l.style.display='none';"></iframe>
+        </div>`;
+      } else {
+        html += `<div class="embed-item"><div class="loading-placeholder"><span>⚠ Cannot parse URL</span><a href="${url}" target="_blank" style="color:var(--accent);font-size:.72rem;">Open in browser</a></div></div>`;
+      }
+    });
+    if (rest > 0) html += `<div class="embed-more-hint">${rest} more posts not shown</div>`;
+    cardEmbeds.innerHTML = html;
+    cardEmbeds.scrollTop = 0;
+
+    // Update note badge & button
+    const hasNote = notes[cr.id] && notes[cr.id].trim();
+    document.getElementById('note-badge').classList.toggle('has-note', !!hasNote);
+    document.getElementById('note-btn').classList.toggle('has-note', !!hasNote);
+  }
+
+  function recordDecision(decision) {
+    if (currentIdx >= creators.length) return;
+    const cr = creators[currentIdx];
+    historyStack.push({ idx: currentIdx, prev: results[cr.id], prevNote: notes[cr.id] });
+    results[cr.id] = decision;
+    card.classList.add(decision === 'approve' ? 'exit-right' : decision === 'reject' ? 'exit-left' : 'exit-up');
+    setTimeout(() => { loadCard(currentIdx + 1); updateStats(); }, 300);
+  }
+
+  function undo() {
+    if (!historyStack.length) return;
+    const last = historyStack.pop();
+    const cr = creators[last.idx];
+    if (last.prev) results[cr.id] = last.prev; else delete results[cr.id];
+    if (last.prevNote !== undefined) notes[cr.id] = last.prevNote;
+    loadCard(last.idx);
+    updateStats();
+  }
+
+  function updateStats() {
+    const v = Object.values(results);
+    document.getElementById('approve-count').textContent = v.filter(x=>x==='approve').length;
+    document.getElementById('reject-count').textContent = v.filter(x=>x==='reject').length;
+    document.getElementById('skip-count').textContent = v.filter(x=>x==='skip').length;
+  }
+
+  // Swipe
+  let sx=0, sy=0, dragging=false, dx=0, dy=0;
+  const TH = 80;
+
+  card.addEventListener('pointerdown', e => {
+    if (e.target.tagName==='IFRAME'||e.target.tagName==='A') return;
+    dragging=true; sx=e.clientX; sy=e.clientY; dx=0; dy=0;
+    card.style.transition='none';
+  });
+
+  document.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    dx = e.clientX - sx; dy = e.clientY - sy;
+    if (Math.abs(dy) > Math.abs(dx)*1.5 && Math.abs(dx)<30) return;
+    e.preventDefault();
+    card.style.transform = `translate(${dx}px,${Math.min(dy,0)}px) rotate(${dx*0.06}deg)`;
+    const ai = card.querySelector('.swipe-indicator.approve');
+    const ri = card.querySelector('.swipe-indicator.reject');
+    if (dx>40){ai.style.opacity=Math.min((dx-40)/60,1);ri.style.opacity=0;card.classList.add('swiping-right');card.classList.remove('swiping-left');}
+    else if(dx<-40){ri.style.opacity=Math.min((-dx-40)/60,1);ai.style.opacity=0;card.classList.add('swiping-left');card.classList.remove('swiping-right');}
+    else{ai.style.opacity=0;ri.style.opacity=0;card.classList.remove('swiping-left','swiping-right');}
+  });
+
+  document.addEventListener('pointerup', () => {
+    if (!dragging) return;
+    dragging=false; card.style.transition='';
+    card.querySelector('.swipe-indicator.approve').style.opacity=0;
+    card.querySelector('.swipe-indicator.reject').style.opacity=0;
+    card.classList.remove('swiping-left','swiping-right');
+    if(dx>TH) recordDecision('approve');
+    else if(dx<-TH) recordDecision('reject');
+    else if(dy<-TH && Math.abs(dy)>Math.abs(dx)) recordDecision('skip');
+    else card.style.transform='';
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (reviewPhase.style.display!=='flex') return;
+    if(e.key==='ArrowRight'){e.preventDefault();recordDecision('approve');}
+    else if(e.key==='ArrowLeft'){e.preventDefault();recordDecision('reject');}
+    else if(e.key==='ArrowUp'){e.preventDefault();recordDecision('skip');}
+    else if(e.key==='z'||e.key==='Z'){e.preventDefault();undo();}
+    else if(e.key==='n'||e.key==='N'){e.preventDefault();openNoteModal();}
+    else if(e.key==='Escape'){e.preventDefault();if(document.getElementById('note-overlay').classList.contains('open')){closeNoteModal();}else{showResults();}}
+  });
+
+  document.getElementById('approve-btn').addEventListener('click',()=>recordDecision('approve'));
+  document.getElementById('reject-btn').addEventListener('click',()=>recordDecision('reject'));
+  document.getElementById('skip-btn').addEventListener('click',()=>recordDecision('skip'));
+  document.getElementById('undo-btn').addEventListener('click',undo);
+  document.getElementById('finish-btn').addEventListener('click',showResults);
+
+  // Note modal
+  function openNoteModal() {
+    if (currentIdx >= creators.length) return;
+    const cr = creators[currentIdx];
+    document.getElementById('note-modal-creator').textContent = cr.id;
+    document.getElementById('note-textarea').value = notes[cr.id] || '';
+    document.getElementById('note-overlay').classList.add('open');
+    setTimeout(() => document.getElementById('note-textarea').focus(), 100);
+  }
+  function closeNoteModal() {
+    document.getElementById('note-overlay').classList.remove('open');
+  }
+  function saveNote() {
+    const cr = creators[currentIdx];
+    const text = document.getElementById('note-textarea').value.trim();
+    if (text) notes[cr.id] = text; else delete notes[cr.id];
+    closeNoteModal();
+    document.getElementById('note-badge').classList.toggle('has-note', !!text);
+    document.getElementById('note-btn').classList.toggle('has-note', !!text);
+  }
+
+  document.getElementById('note-btn').addEventListener('click', openNoteModal);
+  document.getElementById('note-cancel').addEventListener('click', closeNoteModal);
+  document.getElementById('note-save').addEventListener('click', saveNote);
+  document.getElementById('note-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeNoteModal(); });
+  document.getElementById('note-textarea').addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); saveNote(); }
+    if (e.key === 'Escape') { e.preventDefault(); closeNoteModal(); }
+  });
+
+  function showResults() {
+    showPhase('results');
+    const ap=creators.filter(c=>results[c.id]==='approve');
+    const rj=creators.filter(c=>results[c.id]==='reject');
+    const sk=creators.filter(c=>results[c.id]==='skip');
+    const un=creators.filter(c=>!results[c.id]);
+    const noted=creators.filter(c=>notes[c.id]);
+    document.getElementById('r-approve').textContent=ap.length;
+    document.getElementById('r-reject').textContent=rj.length;
+    document.getElementById('r-skip').textContent=sk.length;
+    document.getElementById('r-unreviewed').textContent=un.length;
+    document.getElementById('approved-list').textContent=ap.length?ap.map(c=>c.id).join('\n'):'—';
+    document.getElementById('rejected-list').textContent=rj.length?rj.map(c=>c.id).join('\n'):'—';
+    if (noted.length) {
+      document.getElementById('noted-list').innerHTML = noted.map(c => {
+        const dec = results[c.id] || 'unreviewed';
+        const decLabel = dec==='approve'?'<span style="color:var(--approve)">✓ Approved</span>':dec==='reject'?'<span style="color:var(--reject)">✗ Rejected</span>':'<span style="color:var(--text-dim)">⊘</span>';
+        return `<div class="noted-item"><span class="noted-id">${c.id}</span><span class="noted-decision">${decLabel}</span><div class="noted-text">${notes[c.id]}</div></div>`;
+      }).join('');
+    } else {
+      document.getElementById('noted-list').textContent = '—';
+    }
+  }
+
+  function copyText(text,btn,orig){navigator.clipboard.writeText(text).then(()=>{btn.textContent='✅ Copied!';setTimeout(()=>btn.textContent=orig,1500);});}
+
+  document.getElementById('copy-approved-ids').addEventListener('click',function(){
+    copyText(creators.filter(c=>results[c.id]==='approve').map(c=>c.id).join('\n'),this,'📋 Copy Approved IDs');
+  });
+  document.getElementById('copy-rejected-ids').addEventListener('click',function(){
+    copyText(creators.filter(c=>results[c.id]==='reject').map(c=>c.id).join('\n'),this,'📋 Copy Rejected IDs');
+  });
+  document.getElementById('copy-noted').addEventListener('click',function(){
+    const noted = creators.filter(c=>notes[c.id]).map(c=>`${c.id}\t${results[c.id]||'unreviewed'}\t${notes[c.id]}`).join('\n');
+    copyText(noted||'No notes',this,'📋 Copy Noted');
+  });
+  document.getElementById('download-csv').addEventListener('click',()=>{
+    let csv='Creator_ID,Decision,Note,Post_Count,URLs\n';
+    creators.forEach(c=>{
+      const note = (notes[c.id]||'').replace(/"/g,'""');
+      csv+=`"${c.id}","${results[c.id]||'unreviewed'}","${note}",${c.urls.length},"${c.urls.join(' | ')}"\n`;
+    });
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
+    a.download='creator_review_results.csv';a.click();
+  });
+
+  document.getElementById('restart-btn').addEventListener('click',()=>showPhase('input'));
+
+  // Fix: recover keyboard focus when iframe steals it
+  setInterval(() => {
+    if (reviewPhase.style.display === 'flex' && !document.getElementById('note-overlay').classList.contains('open')) {
+      if (document.activeElement && document.activeElement.tagName === 'IFRAME') {
+        document.body.focus();
+      }
+    }
+  }, 200);
+})();
+</script>
+</body>
+</html>
