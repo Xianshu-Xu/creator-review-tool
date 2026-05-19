@@ -86,9 +86,10 @@
   .saved-project-info{display:flex;flex-direction:column;gap:.2rem}
   .saved-project-name{font-size:.82rem;font-weight:500}
   .saved-project-meta{font-size:.68rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:.3px}
-  .saved-project-actions{display:flex;gap:.5rem}
-  .saved-project-actions button{background:none;border:none;cursor:pointer;font-size:.9rem;padding:.2rem;opacity:.4;transition:all .2s}
-  .saved-project-actions button:hover{opacity:.8;transform:scale(1.1)}
+  .saved-project-actions{display:flex;gap:.4rem;align-items:center}
+  .saved-project-actions button{border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);cursor:pointer;font-size:.68rem;padding:.3rem .55rem;border-radius:7px;transition:all .2s;font-family:'Outfit',sans-serif;font-weight:500}
+  .saved-project-actions button:hover{border-color:var(--accent-dim);background:var(--accent-bg);color:var(--accent-light)}
+  .saved-project-actions .delete-btn:hover{border-color:var(--reject);background:var(--reject-bg);color:var(--reject)}
 
   .setup-footer{width:100%;max-width:620px;display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-bottom:3rem}
   #parsed-count{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text-dim);letter-spacing:.3px}
@@ -722,6 +723,16 @@
     a.click();
   }
 
+  function exportProjectData(data) {
+    const safeName = (data.name || 'creator_review_project').replace(/[^a-zA-Z0-9]/g, '_');
+    const blob = new Blob([JSON.stringify({...data, savedAt: new Date().toISOString(), version: 1}, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${safeName}_progress.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+
   function importProject(file) {
     const reader = new FileReader();
     reader.onload = e => {
@@ -780,10 +791,15 @@
           <div class="saved-project-meta">${reviewed}/${total} reviewed · saved ${new Date(p.savedAt).toLocaleDateString()}</div>
         </div>
         <div class="saved-project-actions">
-          <button class="resume-btn" title="Resume">▶️</button>
-          <button class="delete-btn" title="Delete">🗑</button>
+          <button class="resume-btn" title="Resume this project">Resume</button>
+          <button class="export-saved-btn" title="Download project file">Export</button>
+          <button class="delete-btn" title="Delete saved project">Delete</button>
         </div>`;
       div.querySelector('.resume-btn').addEventListener('click', e => { e.stopPropagation(); resumeProject(key); });
+      div.querySelector('.export-saved-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        exportProjectData(p);
+      });
       div.querySelector('.delete-btn').addEventListener('click', e => {
         e.stopPropagation();
         delete projects[key];
