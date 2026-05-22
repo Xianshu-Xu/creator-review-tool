@@ -16,29 +16,21 @@
     --accent:#89C0E0;--accent-light:#B0D8F0;--accent-dim:#5A95B8;--accent-bg:rgba(137,192,224,.1);
     --radius:12px;--radius-lg:18px;
   }
-  body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;display:flex;flex-direction:column;outline:none;-webkit-font-smoothing:antialiased}
-
-  /* ── Shared ── */
+  body{font-family:'Outfit',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;outline:none;-webkit-font-smoothing:antialiased}
   .btn{padding:.6rem 1.6rem;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);color:var(--text);font-family:'Outfit',sans-serif;font-weight:500;font-size:.82rem;cursor:pointer;transition:all .25s ease;letter-spacing:.2px}
   .btn:hover{border-color:var(--accent-dim);background:var(--accent-bg);color:var(--accent-light)}
   .btn.primary{background:linear-gradient(135deg,var(--accent-dim),var(--accent));border:none;color:#0A0E15;font-weight:600;box-shadow:0 2px 20px rgba(137,192,224,.15)}
   .btn.primary:hover{box-shadow:0 4px 30px rgba(137,192,224,.25);transform:translateY(-1px)}
   .btn:disabled{opacity:.25;cursor:not-allowed;transform:none;box-shadow:none}
   .mono{font-family:'JetBrains Mono',monospace}
-
-  /* ── Setup Phase ── */
-  #setup-phase{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100vh;padding:3rem 2rem;overflow-y:auto;animation:fadeIn .6s ease}
+  #setup-phase{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:auto;min-height:100vh;padding:3rem 2rem;overflow-y:auto;animation:fadeIn .6s ease}
   @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-
   #setup-phase h1{font-family:'Outfit',sans-serif;font-size:2rem;font-weight:300;margin-bottom:.3rem;letter-spacing:-1px;color:#fff}
   .creator-credit{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text-dim);margin-bottom:1.2rem;opacity:.5;letter-spacing:.5px}
   #setup-phase p.subtitle{color:var(--text-dim);font-size:.85rem;margin-bottom:2rem;text-align:center;line-height:1.8;font-weight:300;max-width:500px}
-
   .setup-section{width:100%;max-width:620px;margin-bottom:2.2rem}
   .setup-section h2{font-size:.95rem;font-weight:500;margin-bottom:.8rem;display:flex;align-items:center;gap:.6rem;letter-spacing:.3px}
   .setup-section h2 .step-num{background:linear-gradient(135deg,var(--accent-dim),var(--accent));color:#0A0E15;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;flex-shrink:0}
-
-  /* Data input area */
   .input-mode-tabs{display:flex;gap:.35rem;margin-bottom:.8rem}
   .tab-btn{flex:1;padding:.55rem .8rem;border:1px solid transparent;background:var(--surface);color:var(--text-dim);border-radius:var(--radius);font-size:.78rem;font-weight:500;cursor:pointer;transition:all .25s;font-family:'Outfit',sans-serif}
   .tab-btn:hover{color:var(--text);background:var(--surface2)}
@@ -50,8 +42,6 @@
   textarea.main-input:focus{border-color:var(--accent-dim);box-shadow:0 0 0 3px rgba(137,192,224,.08)}
   textarea.main-input::placeholder{color:var(--text-dim);opacity:.4}
   .format-hint{font-size:.68rem;color:var(--text-dim);margin-top:.5rem;font-family:'JetBrains Mono',monospace;opacity:.5;letter-spacing:.3px;line-height:1.6}
-
-  /* Excel upload */
   .upload-area{border:1.5px dashed var(--border);border-radius:var(--radius-lg);padding:1.8rem;text-align:center;cursor:pointer;transition:all .3s;background:var(--surface)}
   .upload-area:hover{border-color:var(--accent-dim);background:var(--accent-bg)}
   .upload-area.has-file{border-color:var(--approve);border-style:solid;background:rgba(94,189,140,.05)}
@@ -59,15 +49,11 @@
   .upload-area .upload-label{font-size:.82rem;color:var(--text-dim);font-weight:400}
   .upload-area .upload-label strong{color:var(--accent)}
   .upload-file-info{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--approve);margin-top:.5rem;letter-spacing:.3px}
-
-  /* Column mapping */
   .col-mapping{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.6rem}
   .col-map-item{display:flex;flex-direction:column;gap:.25rem}
   .col-map-item label{font-size:.65rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:.3px}
   .col-map-item select{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:.4rem .6rem;border-radius:8px;font-size:.72rem;outline:none;min-width:150px;font-family:'Outfit',sans-serif;transition:border-color .2s}
   .col-map-item select:focus{border-color:var(--accent-dim)}
-
-  /* Tag config */
   .tag-config-list{display:flex;flex-direction:column;gap:.6rem}
   .tag-config-row{display:flex;gap:.5rem;align-items:center}
   .tag-config-row input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.45rem .6rem;border-radius:8px;font-size:.78rem;outline:none;font-family:'Outfit',sans-serif;transition:border-color .2s}
@@ -78,8 +64,6 @@
   .tag-config-row .remove-tag:hover{opacity:.8;transform:scale(1.1)}
   .add-tag-btn{font-size:.78rem;color:var(--accent);cursor:pointer;background:none;border:1px dashed var(--border);border-radius:8px;padding:.4rem 1rem;transition:all .25s;align-self:flex-start;margin-top:.4rem;font-family:'Outfit',sans-serif;font-weight:500}
   .add-tag-btn:hover{border-color:var(--accent-dim);background:var(--accent-bg)}
-
-  /* Saved projects */
   .saved-projects{display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem}
   .saved-project-item{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.7rem 1rem;cursor:pointer;transition:all .25s}
   .saved-project-item:hover{border-color:var(--accent-dim);background:var(--accent-bg)}
@@ -90,12 +74,9 @@
   .saved-project-actions button{border:1px solid var(--border);background:var(--surface2);color:var(--text-dim);cursor:pointer;font-size:.68rem;padding:.3rem .55rem;border-radius:7px;transition:all .2s;font-family:'Outfit',sans-serif;font-weight:500}
   .saved-project-actions button:hover{border-color:var(--accent-dim);background:var(--accent-bg);color:var(--accent-light)}
   .saved-project-actions .delete-btn:hover{border-color:var(--reject);background:var(--reject-bg);color:var(--reject)}
-
   .setup-footer{width:100%;max-width:620px;display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-bottom:3rem}
   #parsed-count{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--text-dim);letter-spacing:.3px}
-
-  /* ── Review Phase ── */
-  #review-phase{display:none;flex-direction:column;height:100vh}
+  #review-phase{display:none;flex-direction:column;position:fixed;inset:0;z-index:100;overflow:hidden;background:var(--bg)}
   .top-bar{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1.2rem;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;backdrop-filter:blur(8px)}
   .progress-info{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-dim);letter-spacing:.3px}
   .progress-info span{color:var(--accent-light);font-weight:500}
@@ -103,13 +84,10 @@
   .stat-approve{color:var(--approve)}.stat-reject{color:var(--reject)}.stat-skip{color:var(--text-dim)}
   .progress-bar-track{height:2px;background:var(--surface2);flex-shrink:0}
   .progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent-dim),var(--accent),var(--accent-light));transition:width .4s ease;box-shadow:0 0 8px rgba(137,192,224,.3)}
-
-  .review-body{flex:1;display:flex;overflow:hidden}
-
-  /* Left: card */
+  .review-body{flex:1;display:flex;overflow:hidden;min-height:0}
   .card-area{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:.8rem;background:radial-gradient(ellipse at center,rgba(137,192,224,.02) 0%,transparent 70%)}
   .card{
-    width:100%;max-width:460px;height:calc(100vh - 160px);max-height:780px;
+    width:100%;max-width:460px;height:calc(100% - 1.6rem);max-height:780px;
     background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);
     overflow:hidden;position:relative;user-select:none;
     transition:transform .06s linear,box-shadow .3s,max-width .3s ease;will-change:transform;
@@ -121,17 +99,14 @@
   .card.exit-left{transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s ease;transform:translateX(-150%) rotate(-12deg)!important;opacity:0}
   .card.exit-right{transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s ease;transform:translateX(150%) rotate(12deg)!important;opacity:0}
   .card.exit-up{transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s ease;transform:translateY(-150%)!important;opacity:0}
-
   .swipe-indicator{position:absolute;top:50%;transform:translateY(-50%);z-index:20;font-weight:600;font-size:1.1rem;padding:.6rem 1.2rem;border-radius:var(--radius);border:2px solid;opacity:0;transition:opacity .15s;pointer-events:none;font-family:'Outfit',sans-serif;letter-spacing:.5px;backdrop-filter:blur(8px)}
   .swipe-indicator.approve{right:1.5rem;color:var(--approve);border-color:var(--approve);background:var(--approve-bg)}
   .swipe-indicator.reject{left:1.5rem;color:var(--reject);border-color:var(--reject);background:var(--reject-bg)}
-
   .creator-header{padding:.7rem 1rem;background:linear-gradient(180deg,var(--surface2),var(--surface));border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
   .creator-id{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent);letter-spacing:.3px}
   .creator-post-count{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text-dim);letter-spacing:.3px}
   .note-badge{display:none;background:var(--accent);color:#0A0E15;font-family:'JetBrains Mono',monospace;font-size:.5rem;padding:2px 6px;border-radius:4px;margin-left:.5rem;font-weight:500}
   .note-badge.has-note{display:inline}
-
   .card-embeds{flex:1;overflow-y:auto;background:var(--bg);scroll-snap-type:y proximity;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y;position:relative}
   .embed-item{scroll-snap-align:start;width:100%;position:relative;border-bottom:1px solid var(--border)}
   .embed-item .embed-frame{width:100%;height:520px;border:none}
@@ -140,14 +115,10 @@
   .embed-item .open-post-link{position:absolute;top:8px;right:10px;background:rgba(10,14,21,.8);color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:.6rem;padding:3px 8px;border-radius:6px;z-index:5;text-decoration:none;transition:all .2s;backdrop-filter:blur(4px);letter-spacing:.3px}
   .embed-item .open-post-link:hover{background:rgba(137,192,224,.15);color:var(--accent-light)}
   .embed-more-hint{text-align:center;color:var(--text-dim);font-size:.72rem;padding:.8rem;font-family:'JetBrains Mono',monospace;background:var(--surface2);letter-spacing:.3px}
-
   .spinner{width:24px;height:24px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-
   .card-footer{padding:.6rem 1rem;background:linear-gradient(0deg,var(--surface2),var(--surface));border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
   .card-index{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--text-dim);letter-spacing:.3px}
-
-  /* Right: tag panel */
   .tag-panel{width:260px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
   .tag-panel-header{padding:.8rem 1rem;font-size:.85rem;font-weight:500;border-bottom:1px solid var(--border);flex-shrink:0;letter-spacing:.3px;color:var(--accent-light)}
   .tag-group{padding:.8rem 1rem;border-bottom:1px solid rgba(33,48,64,.5)}
@@ -161,7 +132,6 @@
   .note-area textarea{flex:1;min-height:60px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.78rem;padding:.6rem;resize:none;outline:none;font-family:'Outfit',sans-serif;line-height:1.5;transition:border-color .2s}
   .note-area textarea:focus{border-color:var(--accent-dim);box-shadow:0 0 0 3px rgba(137,192,224,.06)}
   .note-area textarea::placeholder{color:var(--text-dim);opacity:.4}
-
   .controls{display:flex;align-items:center;justify-content:center;gap:1rem;padding:.8rem;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0}
   .ctrl-btn{width:50px;height:50px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;font-size:1.2rem;color:var(--text-dim)}
   .ctrl-btn:hover{transform:scale(1.08)}
@@ -175,8 +145,6 @@
   .ctrl-btn.undo-btn:hover{border-color:var(--accent-dim);background:var(--accent-bg);color:var(--accent)}
   .key-hint{font-family:'JetBrains Mono',monospace;font-size:.5rem;color:var(--text-dim);position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);white-space:nowrap;opacity:.35;letter-spacing:.5px}
   .ctrl-wrap{position:relative}
-
-  /* ── Results Phase ── */
   #results-phase{display:none;flex-direction:column;height:100vh;padding:2.5rem 2rem;overflow-y:auto}
   #results-phase h2{font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:300;margin-bottom:1.5rem;letter-spacing:-.5px}
   .results-summary{display:flex;gap:.8rem;margin-bottom:2rem;flex-wrap:wrap}
@@ -194,16 +162,21 @@
   .noted-item .noted-decision{font-size:.62rem;margin-left:.5rem}
   .noted-item .noted-tags{font-size:.62rem;color:var(--accent);margin-left:.5rem}
   .results-credit{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text-dim);margin-top:2rem;opacity:.4;letter-spacing:.5px}
-
-  /* ── Responsive ── */
   @media(max-width:900px){
     .review-body{flex-direction:column}
     .tag-panel{width:100%;border-left:none;border-top:1px solid var(--border);max-height:180px;flex-shrink:0}
     .tag-panel .note-area textarea{min-height:40px}
     #setup-phase{padding:2rem 1.5rem}
   }
-
-  /* ── Scrollbar ── */
+  @media(min-width:1600px){
+    html{zoom:1.15}
+  }
+  @media(min-width:2200px){
+    html{zoom:1.35}
+  }
+  @media(min-width:2800px){
+    html{zoom:1.5}
+  }
   ::-webkit-scrollbar{width:4px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
@@ -221,7 +194,6 @@
     ← Reject &nbsp;|&nbsp; Approve → &nbsp;|&nbsp; ↑ Skip &nbsp;|&nbsp; N Note &nbsp;|&nbsp; Z Undo
   </p>
 
-  <!-- Saved projects -->
   <div class="setup-section" id="saved-section">
     <h2><span class="step-num">💾</span> Resume or Import a Project</h2>
     <div class="saved-projects" id="saved-projects"></div>
@@ -232,7 +204,6 @@
     </div>
   </div>
 
-  <!-- Review Mode -->
   <div class="setup-section">
     <h2><span class="step-num">0</span> Review Mode</h2>
     <div class="input-mode-tabs">
@@ -242,11 +213,9 @@
     <div class="format-hint" id="mode-hint">Review individual posts (photos or videos) grouped by creator</div>
   </div>
 
-  <!-- Step 1: Data -->
   <div class="setup-section">
     <h2><span class="step-num">1</span> Load Creator Data</h2>
 
-    <!-- Posts mode inputs -->
     <div id="posts-inputs">
       <div class="input-mode-tabs">
         <button class="tab-btn active" data-mode="grouped">Paste Grouped</button>
@@ -281,9 +250,8 @@
         </div>
       </div>
     </div>
-    </div><!-- end posts-inputs -->
+    </div>
 
-    <!-- Profiles mode inputs -->
     <div id="profiles-inputs" style="display:none">
       <div class="input-mode-tabs">
         <button class="tab-btn profile-tab active" data-pmode="paste">Paste Profile Links</button>
@@ -311,7 +279,6 @@
     </div>
   </div>
 
-  <!-- Step 2: Tags -->
   <div class="setup-section">
     <h2><span class="step-num">2</span> Custom Tags <span style="font-size:.7rem;color:var(--text-dim);font-weight:400">(optional)</span></h2>
     <div class="tag-config-list" id="tag-config-list">
@@ -324,7 +291,6 @@
     <button class="add-tag-btn" id="add-tag-btn">+ Add tag</button>
   </div>
 
-  <!-- Step 3: Project name -->
   <div class="setup-section">
     <h2><span class="step-num">3</span> Project Name</h2>
     <input id="project-name" class="main-input" style="height:auto;padding:.5rem .7rem;font-family:'DM Sans',sans-serif;font-size:.82rem" placeholder="e.g. UK Shoppable Photos May 2026" value="">
@@ -368,7 +334,6 @@
       </div>
     </div>
 
-    <!-- Tag panel (sidebar on desktop, slide-out on mobile) -->
     <div class="tag-panel" id="tag-panel">
       <div class="tag-panel-header">Tags & Notes</div>
       <div id="tag-groups-container"></div>
@@ -426,17 +391,16 @@
   const MAXE = 6;
   const STORAGE_KEY = 'crt_projects';
 
-  // ── State ──
   let creators = [];
   let currentIdx = 0;
-  let results = {};    // id -> 'approve'|'reject'|'skip'
-  let notes = {};      // id -> string
-  let tags = {};        // id -> { tagName: selectedValue, ... }
-  let tagConfig = [];   // [{name, options:[]}, ...]
+  let results = {};
+  let notes = {};
+  let tags = {};
+  let tagConfig = [];
   let historyStack = [];
   let activeMode = 'grouped';
   let projectName = '';
-  let reviewMode = 'posts'; // 'posts' or 'profiles'
+  let reviewMode = 'posts';
   let excelData = null;
   let profileExcelData = null;
   let profileInputMode = 'paste';
@@ -445,7 +409,31 @@
   const card = $('card');
   const cardEmbeds = $('card-embeds');
 
-  // ── Phases ──
+  // ── MutationObserver: fix allow attribute on TikTok-generated iframes (for audio) ──
+  const embedObserver = new MutationObserver(mutations => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (node.nodeType !== 1) continue;
+        // Direct iframe added by TikTok embed.js
+        if (node.tagName === 'IFRAME') {
+          fixIframeAllow(node);
+        }
+        // Or iframe nested inside a container
+        const iframes = node.querySelectorAll ? node.querySelectorAll('iframe') : [];
+        iframes.forEach(fixIframeAllow);
+      }
+    }
+  });
+
+  function fixIframeAllow(iframe) {
+    const current = iframe.getAttribute('allow') || '';
+    if (!current.includes('autoplay')) {
+      iframe.setAttribute('allow', ('autoplay; encrypted-media; ' + current).trim().replace(/;+\s*$/, ''));
+    }
+  }
+
+  embedObserver.observe(document.body, { childList: true, subtree: true });
+
   function showPhase(p) {
     $('setup-phase').style.display = p === 'setup' ? 'flex' : 'none';
     $('review-phase').style.display = p === 'review' ? 'flex' : 'none';
@@ -453,7 +441,6 @@
     if (p === 'setup') loadSavedProjects();
   }
 
-  // ── Parsing ──
   function extractVideoId(url) { const m = url.match(/video\/(\d+)/); return m ? m[1] : null; }
   function extractUsername(url) { const m = url.match(/tiktok\.com\/@([^\/]+)\//); return (m && m[1]) ? m[1] : null; }
   function isUrl(s) { return /https?:\/\//.test(s) || /tiktok\.com/.test(s); }
@@ -516,7 +503,6 @@
     $('start-btn').disabled = p.length === 0;
   }
 
-  // ── Tag Config ──
   function readTagConfig() {
     const rows = document.querySelectorAll('.tag-config-row');
     tagConfig = [];
@@ -541,16 +527,10 @@
   }
 
   $('add-tag-btn').addEventListener('click', () => addTagRow('', ''));
+  document.querySelector('.tag-config-row .remove-tag').addEventListener('click', function() { this.parentElement.remove(); });
 
-  // Remove tag row handler (for initial row)
-  document.querySelector('.tag-config-row .remove-tag').addEventListener('click', function() {
-    this.parentElement.remove();
-  });
-
-  // ── Excel Upload ──
   const uploadArea = $('upload-area');
   const excelFile = $('excel-file');
-
   uploadArea.addEventListener('click', () => excelFile.click());
   uploadArea.addEventListener('dragover', e => { e.preventDefault(); uploadArea.style.borderColor = 'var(--accent)'; });
   uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = ''; });
@@ -567,13 +547,11 @@
         if (!excelData.length) { $('upload-file-info').textContent = '⚠ No data found'; return; }
         uploadArea.classList.add('has-file');
         $('upload-file-info').textContent = `✓ ${file.name} — ${excelData.length} rows`;
-        // Populate column selects
         const cols = Object.keys(excelData[0]);
         ['col-id', 'col-url'].forEach(selId => {
           const sel = $(selId);
           sel.innerHTML = '<option value="">-- select --</option>' + cols.map(c => `<option value="${c}">${c}</option>`).join('');
         });
-        // Auto-detect columns
         const colLower = cols.map(c => ({ orig: c, low: c.toLowerCase() }));
         const idGuess = colLower.find(c => c.low.includes('author') || c.low.includes('creator') || c.low === 'id');
         const urlGuess = colLower.find(c => c.low.includes('url') || c.low.includes('link') || c.low.includes('item'));
@@ -588,7 +566,6 @@
     reader.readAsArrayBuffer(file);
   }
 
-  // ── Tab switching ──
   document.querySelectorAll('.tab-btn:not(.mode-btn):not(.profile-tab)').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#posts-inputs .tab-btn').forEach(b => b.classList.remove('active'));
@@ -600,7 +577,6 @@
     });
   });
 
-  // Review mode switching (Posts vs Profiles)
   document.querySelectorAll('.mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -615,7 +591,6 @@
     });
   });
 
-  // Profile tab switching
   document.querySelectorAll('.profile-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.profile-tab').forEach(b => b.classList.remove('active'));
@@ -627,9 +602,8 @@
     });
   });
 
-  // ── Profile Parsing ──
   function extractUsernameFromProfile(url) {
-    const cleaned = url.replace(/\?.*$/, '').trim(); // strip query params
+    const cleaned = url.replace(/\?.*$/, '').trim();
     const m = cleaned.match(/@([^\/\s]+)/);
     return m ? m[1] : null;
   }
@@ -643,7 +617,6 @@
         return { id: username, urls: [profileUrl] };
       })
       .filter(Boolean)
-      // deduplicate by username
       .filter((c, i, arr) => arr.findIndex(x => x.id === c.id) === i);
   }
 
@@ -664,10 +637,8 @@
     return result;
   }
 
-  // Profile Excel upload
   const uploadAreaProfile = $('upload-area-profile');
   const excelFileProfile = $('excel-file-profile');
-
   uploadAreaProfile.addEventListener('click', () => excelFileProfile.click());
   uploadAreaProfile.addEventListener('dragover', e => { e.preventDefault(); uploadAreaProfile.style.borderColor = 'var(--accent)'; });
   uploadAreaProfile.addEventListener('dragleave', () => { uploadAreaProfile.style.borderColor = ''; });
@@ -687,7 +658,6 @@
         const cols = Object.keys(profileExcelData[0]);
         const sel = $('col-profile');
         sel.innerHTML = '<option value="">-- select --</option>' + cols.map(c => `<option value="${c}">${c}</option>`).join('');
-        // Auto-detect
         const guess = cols.find(c => /handle|profile|tiktok|url|link|username/i.test(c));
         if (guess) sel.value = guess;
         $('col-mapping-profile').style.display = 'flex';
@@ -701,13 +671,11 @@
 
   $('input-profiles').addEventListener('input', updateParsedCount);
   $('col-profile').addEventListener('change', updateParsedCount);
-
   $('input-grouped').addEventListener('input', updateParsedCount);
   $('input-flat').addEventListener('input', updateParsedCount);
   $('col-id').addEventListener('change', updateParsedCount);
   $('col-url').addEventListener('change', updateParsedCount);
 
-  // ── Import / Export Project Files ──
   function exportProject() {
     saveCurrentTags();
     const data = {
@@ -742,11 +710,9 @@
           $('import-status').textContent = '⚠ Invalid project file';
           return;
         }
-        // Save to localStorage too
         const projects = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
         projects[p.name] = p;
         localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-        // Resume directly
         resumeProject(p.name);
       } catch (err) {
         $('import-status').textContent = '⚠ Failed to parse file';
@@ -761,7 +727,6 @@
   });
   $('export-progress-btn').addEventListener('click', exportProject);
 
-  // ── Local Storage ──
   function saveProject() {
     const data = {
       name: projectName, reviewMode,
@@ -830,12 +795,10 @@
     updateStats();
   }
 
-  // ── Start Review ──
   $('start-btn').addEventListener('click', () => {
     creators = parseInput();
     if (!creators.length) return;
     readTagConfig();
-    // reviewMode is already set by the mode buttons
     projectName = $('project-name').value.trim() || ('Project ' + new Date().toLocaleDateString());
     currentIdx = 0;
     results = {};
@@ -849,7 +812,6 @@
     saveProject();
   });
 
-  // ── Tag Panel ──
   function buildTagPanel() {
     const container = $('tag-groups-container');
     container.innerHTML = '';
@@ -893,14 +855,12 @@
       if (sel) ct[name] = sel.dataset.value;
     });
     tags[id] = ct;
-    // Save note from inline
     const noteVal = $('inline-note').value.trim();
     if (noteVal) notes[id] = noteVal; else delete notes[id];
     $('note-badge').classList.toggle('has-note', !!noteVal);
     saveProject();
   }
 
-  // Auto-save note on input
   $('inline-note').addEventListener('input', () => {
     if (currentIdx >= creators.length) return;
     const id = creators[currentIdx].id;
@@ -909,10 +869,8 @@
     $('note-badge').classList.toggle('has-note', !!v);
   });
 
-  // ── Card Loading ──
   function loadCard(idx) {
     if (idx >= creators.length) { showResults(); return; }
-    // Save tags/note from previous card before moving
     saveCurrentTags();
 
     currentIdx = idx;
@@ -928,25 +886,17 @@
     card.classList.remove('exit-left','exit-right','exit-up','swiping-left','swiping-right');
 
     if (reviewMode === 'profiles') {
-      // ── Profile mode: stacked preload layers ──
-      // Strategy: we keep rendered profiles as stacked layers inside cardEmbeds.
-      // Each layer stays in the DOM (so TikTok iframe doesn't break).
-      // We show the current one and hide the rest.
       const username = cr.id;
       const PRELOAD_AHEAD = 2;
 
-      // Hide all existing layers
       cardEmbeds.querySelectorAll('.profile-layer').forEach(el => {
         el.style.cssText = 'position:absolute;top:0;left:0;width:100%;visibility:hidden;pointer-events:none;';
       });
 
-      // Check if this creator already has a rendered layer
       let currentLayer = cardEmbeds.querySelector(`[data-profile-user="${username}"]`);
       if (currentLayer) {
-        // Already rendered — just show it
         currentLayer.style.cssText = 'padding:.8rem;display:flex;flex-direction:column;align-items:center;min-height:100%;width:100%;position:relative;visibility:visible;';
       } else {
-        // Create new layer
         currentLayer = document.createElement('div');
         currentLayer.className = 'profile-layer';
         currentLayer.dataset.profileUser = username;
@@ -957,8 +907,7 @@
         cardEmbeds.appendChild(currentLayer);
       }
 
-      // Preload next few (hidden but laid out so TikTok embed.js processes them)
-      let needsRender = !currentLayer.querySelector('iframe'); // if no iframe yet, needs render
+      let needsRender = !currentLayer.querySelector('iframe');
       for (let pi = 1; pi <= PRELOAD_AHEAD; pi++) {
         const ni = idx + pi;
         if (ni >= creators.length) break;
@@ -975,14 +924,12 @@
         needsRender = true;
       }
 
-      // Clean up old layers we've passed (keep current and future only)
       cardEmbeds.querySelectorAll('.profile-layer').forEach(el => {
         const layerUser = el.dataset.profileUser;
         const layerIdx = creators.findIndex(c => c.id === layerUser);
         if (layerIdx >= 0 && layerIdx < idx) el.remove();
       });
 
-      // Only reload embed.js if there are unrendered blockquotes
       if (needsRender) {
         const old = document.querySelector('script[src="https://www.tiktok.com/embed.js"]');
         if (old) old.remove();
@@ -994,9 +941,7 @@
 
       card.style.maxWidth = '780px';
     } else {
-      // Reset card width for posts mode
       card.style.maxWidth = '460px';
-      // ── Posts mode: embed iframes ──
       const show = cr.urls.slice(0, MAXE);
       const rest = cr.urls.length - show.length;
       let html = '';
@@ -1010,7 +955,7 @@
             <span class="embed-label">${i+1} / ${cr.urls.length}</span>
             <a class="open-post-link" href="${postUrl}" target="_blank" rel="noopener">open post ↗</a>
             <div class="loading-placeholder" id="ldr-${idx}-${i}"><div class="spinner"></div><span>Loading embed...</span></div>
-           <iframe class="embed-frame" id="frame-${idx}-${i}" src="https://www.tiktok.com/embed/v2/${vid}" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen
+            <iframe class="embed-frame" id="frame-${idx}-${i}" src="https://www.tiktok.com/embed/v2/${vid}" allow="autoplay; encrypted-media" allowfullscreen
               style="display:none"
               onload="this.style.display='block';var l=document.getElementById('ldr-${idx}-${i}');if(l)l.style.display='none';"></iframe>
           </div>`;
@@ -1024,13 +969,10 @@
     }
 
     cardEmbeds.scrollTop = 0;
-
-    // Load tags & note
     loadTagsForCreator(cr.id);
     $('note-badge').classList.toggle('has-note', !!notes[cr.id]);
   }
 
-  // ── Decisions ──
   function recordDecision(decision) {
     if (currentIdx >= creators.length) return;
     saveCurrentTags();
@@ -1039,7 +981,7 @@
     results[cr.id] = decision;
     card.classList.add(decision === 'approve' ? 'exit-right' : decision === 'reject' ? 'exit-left' : 'exit-up');
     saveProject();
-    setTimeout(() => { loadCard(currentIdx + 1); updateStats(); }, 300);
+    setTimeout(() => { loadCard(currentIdx + 1); updateStats(); recoverFocus(); }, 300);
   }
 
   function undo() {
@@ -1052,6 +994,7 @@
     loadCard(last.idx);
     updateStats();
     saveProject();
+    recoverFocus();
   }
 
   function updateStats() {
@@ -1061,7 +1004,6 @@
     $('skip-count').textContent = v.filter(x=>x==='skip').length;
   }
 
-  // ── Swipe ──
   let sx=0,sy=0,dragging=false,dx=0,dy=0;
   const TH=80;
   card.addEventListener('pointerdown',e=>{if(e.target.tagName==='IFRAME'||e.target.tagName==='A')return;dragging=true;sx=e.clientX;sy=e.clientY;dx=0;dy=0;card.style.transition='none'});
@@ -1085,7 +1027,6 @@
     else card.style.transform='';
   });
 
-  // ── Keyboard ──
   document.addEventListener('keydown',e=>{
     if($('review-phase').style.display!=='flex')return;
     const focused=document.activeElement;
@@ -1101,14 +1042,12 @@
     else if(e.key==='Escape'){e.preventDefault();showResults()}
   });
 
-  // ── Buttons ──
   $('approve-btn').addEventListener('click',()=>recordDecision('approve'));
   $('reject-btn').addEventListener('click',()=>recordDecision('reject'));
   $('skip-btn').addEventListener('click',()=>recordDecision('skip'));
   $('undo-btn').addEventListener('click',undo);
   $('finish-btn').addEventListener('click',()=>{saveCurrentTags();showResults()});
 
-  // ── Results ──
   function showResults() {
     saveProject();
     showPhase('results');
@@ -1163,14 +1102,21 @@
   $('restart-btn').addEventListener('click',()=>{showPhase('setup')});
 
   // ── Focus recovery ──
-  setInterval(()=>{
-    if($('review-phase').style.display==='flex'){
-      const ae=document.activeElement;
-      if(ae&&ae.tagName==='IFRAME')document.body.focus();
-    }
-  },200);
+  // Never auto-steal focus from iframes (so embed audio keeps working).
+  // Instead, recover focus when user clicks anywhere outside an iframe,
+  // or after any review action (approve/reject/skip/undo).
+  function recoverFocus() { document.body.focus(); }
 
-  // ── Init ──
+  // Click on card area, controls, tag panel, or top bar → recover focus
+  ['card-area','controls','tag-panel','top-bar'].forEach(cls => {
+    const el = document.querySelector('.' + cls) || $(cls);
+    if (!el) return;
+    el.addEventListener('click', e => {
+      if (e.target.tagName === 'IFRAME' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+      recoverFocus();
+    });
+  });
+
   showPhase('setup');
 })();
 </script>
