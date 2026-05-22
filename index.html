@@ -1010,7 +1010,7 @@
             <span class="embed-label">${i+1} / ${cr.urls.length}</span>
             <a class="open-post-link" href="${postUrl}" target="_blank" rel="noopener">open post ↗</a>
             <div class="loading-placeholder" id="ldr-${idx}-${i}"><div class="spinner"></div><span>Loading embed...</span></div>
-            <iframe class="embed-frame" id="frame-${idx}-${i}" src="https://www.tiktok.com/embed/v2/${vid}" allow="encrypted-media" allowfullscreen
+           <iframe class="embed-frame" id="frame-${idx}-${i}" src="https://www.tiktok.com/embed/v2/${vid}" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowfullscreen
               style="display:none"
               onload="this.style.display='block';var l=document.getElementById('ldr-${idx}-${i}');if(l)l.style.display='none';"></iframe>
           </div>`;
