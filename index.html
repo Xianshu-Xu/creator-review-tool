@@ -177,6 +177,46 @@
   @media(min-width:2800px){
     html{zoom:1.5}
   }
+  /* ── Presenter Mode ── */
+  #presenter-phase{display:none;flex-direction:column;position:fixed;inset:0;z-index:100;overflow:hidden;background:var(--bg)}
+  .pres-top-bar{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+  .pres-title{font-size:.9rem;font-weight:500;color:var(--accent-light);letter-spacing:.3px}
+  .pres-nav-info{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-dim);display:flex;align-items:center;gap:1rem}
+  .pres-body{flex:1;display:flex;overflow:hidden;min-height:0}
+  .pres-video-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;min-width:0;min-height:0;gap:.6rem}
+  .pres-quadrant-label{font-size:1.1rem;font-weight:600;color:var(--accent-light);letter-spacing:.3px;text-align:center;padding:.4rem 1.2rem;background:var(--accent-bg);border:1px solid rgba(137,192,224,.15);border-radius:var(--radius);flex-shrink:0}
+  .pres-video-card{width:100%;max-width:480px;background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 4px 40px rgba(0,0,0,.3);flex:1;min-height:0}
+  .pres-video-header{padding:.6rem 1rem;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+  .pres-case-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent);font-weight:500}
+  .pres-case-type{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--text-dim)}
+  .pres-embed-container{flex:1;background:var(--bg);min-height:0}
+  .pres-embed-container iframe{width:100%;height:100%;border:none}
+  .pres-embed-container .loading-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-dim);font-size:.8rem;gap:.5rem}
+  .pres-data-panel{width:380px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+  .pres-data-header{padding:.8rem 1.2rem;font-size:.85rem;font-weight:500;border-bottom:1px solid var(--border);color:var(--accent-light);letter-spacing:.3px}
+  .pres-metrics{padding:1rem 1.2rem;display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
+  .pres-metric{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.7rem .8rem;display:flex;flex-direction:column;gap:.2rem}
+  .pres-metric .metric-val{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:600;color:#fff}
+  .pres-metric .metric-label{font-size:.65rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase}
+  .pres-metric.highlight{border-color:var(--accent-dim);background:var(--accent-bg)}
+  .pres-metric.highlight .metric-val{color:var(--accent-light)}
+  .pres-analysis{padding:1rem 1.2rem;flex:1;display:flex;flex-direction:column;border-top:1px solid var(--border)}
+  .pres-analysis-label{font-size:.68rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase;margin-bottom:.6rem}
+  .pres-analysis-text{font-size:.82rem;line-height:1.7;color:var(--text);flex:1;overflow-y:auto;white-space:pre-wrap}
+  .pres-controls{display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:.8rem;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0}
+  .pres-controls .ctrl-btn{width:48px;height:48px}
+  .pres-controls .pres-page-info{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--text-dim);min-width:80px;text-align:center}
+  .pres-sheet-tabs{display:flex;gap:.3rem;padding:.5rem 1.2rem;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto}
+  .pres-sheet-tab{padding:.35rem .8rem;border-radius:8px;border:1px solid transparent;background:transparent;color:var(--text-dim);font-size:.72rem;cursor:pointer;transition:all .2s;font-family:'Outfit',sans-serif;font-weight:500;white-space:nowrap}
+  .pres-sheet-tab:hover{color:var(--text);background:var(--surface)}
+  .pres-sheet-tab.active{border-color:var(--accent-dim);color:var(--accent-light);background:var(--accent-bg)}
+
+  @media(max-width:900px){
+    .pres-body{flex-direction:column}
+    .pres-data-panel{width:100%;border-left:none;border-top:1px solid var(--border);max-height:40vh}
+    .pres-metrics{grid-template-columns:1fr 1fr 1fr}
+  }
+
   ::-webkit-scrollbar{width:4px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
@@ -204,31 +244,27 @@
     </div>
   </div>
 
-  <div class="setup-section">
+  <div class="setup-section" id="section-review-mode">
     <h2><span class="step-num">0</span> Review Mode</h2>
     <div class="input-mode-tabs">
       <button class="tab-btn mode-btn active" data-review-mode="posts">📄 Individual Posts</button>
       <button class="tab-btn mode-btn" data-review-mode="profiles">👤 Creator Profiles</button>
+      <button class="tab-btn mode-btn" data-review-mode="presenter">🎬 Presenter</button>
     </div>
     <div class="format-hint" id="mode-hint">Review individual posts (photos or videos) grouped by creator</div>
   </div>
 
-  <div class="setup-section">
+  <div class="setup-section" id="section-load-data">
     <h2><span class="step-num">1</span> Load Creator Data</h2>
 
     <div id="posts-inputs">
       <div class="input-mode-tabs">
-        <button class="tab-btn active" data-mode="grouped">Paste Grouped</button>
-        <button class="tab-btn" data-mode="flat">Paste Links</button>
+        <button class="tab-btn active" data-mode="flat">Paste Links</button>
         <button class="tab-btn" data-mode="excel">Upload Excel</button>
+        <button class="tab-btn" data-mode="grouped">Paste Grouped</button>
       </div>
 
-    <div class="input-box active" id="box-grouped">
-      <label>Creator ID on first line, then links. Blank line between groups.</label>
-      <textarea class="main-input" id="input-grouped" placeholder="7636736562406984000&#10;https://www.tiktok.com/@/video/7636736562406984982&#10;https://www.tiktok.com/@/video/7636421998280723734&#10;&#10;7635405708128816000&#10;https://www.tiktok.com/@/video/7635405708128816386"></textarea>
-    </div>
-
-    <div class="input-box" id="box-flat">
+    <div class="input-box active" id="box-flat">
       <label>One link per line. Auto-groups by username.</label>
       <textarea class="main-input" id="input-flat" placeholder="https://www.tiktok.com/@user1/video/7636736562406984982&#10;https://www.tiktok.com/@user1/video/7636421998280723734&#10;https://www.tiktok.com/@user2/video/7635405708128816386"></textarea>
     </div>
@@ -249,6 +285,11 @@
           <select id="col-url"></select>
         </div>
       </div>
+    </div>
+
+    <div class="input-box" id="box-grouped">
+      <label>Creator ID on first line, then links. Blank line between groups.</label>
+      <textarea class="main-input" id="input-grouped" placeholder="7636736562406984000&#10;https://www.tiktok.com/@/video/7636736562406984982&#10;https://www.tiktok.com/@/video/7636421998280723734&#10;&#10;7635405708128816000&#10;https://www.tiktok.com/@/video/7635405708128816386"></textarea>
     </div>
     </div>
 
@@ -277,6 +318,37 @@
         </div>
       </div>
     </div>
+
+    <!-- Presenter mode inputs -->
+    <div id="presenter-inputs" style="display:none">
+      <p style="font-size:.78rem;color:var(--text-dim);margin-bottom:.8rem;line-height:1.6">Upload an Excel with case URLs, metrics, and analysis to present cases with data side-by-side</p>
+      <div class="upload-area" id="upload-area-presenter">
+        <input type="file" id="excel-file-presenter" accept=".xlsx,.xls,.csv">
+        <div class="upload-label">📊 Upload <strong>Presentation Excel</strong> (.xlsx / .csv)</div>
+      </div>
+      <div class="upload-file-info" id="upload-file-info-presenter"></div>
+      <div id="pres-col-config" style="display:none;margin-top:.8rem">
+        <div class="col-mapping" style="flex-direction:column;gap:.6rem">
+          <div class="col-map-item">
+            <label>URL column</label>
+            <select id="pres-col-url"></select>
+          </div>
+          <div class="col-map-item">
+            <label>Analysis / Notes column (optional)</label>
+            <select id="pres-col-analysis"></select>
+          </div>
+          <div class="col-map-item">
+            <label>Title column (optional — shown above video)</label>
+            <select id="pres-col-quadrant"></select>
+          </div>
+        </div>
+        <div style="margin-top:1rem">
+          <label style="font-size:.72rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:.3px;display:block;margin-bottom:.4rem">Highlight Metrics (comma-separated column names to highlight)</label>
+          <input id="pres-highlight-input" class="main-input" style="height:auto;padding:.5rem .7rem;font-family:'JetBrains Mono',monospace;font-size:.78rem" placeholder="e.g. GMV ($), Total VV, CTR (%), AOV ($)" value="">
+          <div class="format-hint" style="margin-top:.3rem">These metric cards will be visually highlighted in the data panel</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="setup-section">
@@ -299,6 +371,7 @@
   <div class="setup-footer">
     <span id="parsed-count" class="mono" style="font-size:.78rem;color:var(--text-dim)">0 creators · 0 links</span>
     <button class="btn primary" id="start-btn" disabled>Start Review</button>
+    <button class="btn primary" id="start-presenter-btn" style="display:none" disabled>🎬 Start Presentation</button>
   </div>
 </div>
 
@@ -386,6 +459,50 @@
   <div class="results-credit">Created by Xianshu Xu</div>
 </div>
 
+<!-- ═══════ PRESENTER PHASE ═══════ -->
+<div id="presenter-phase">
+  <div class="pres-top-bar">
+    <div class="pres-title" id="pres-title">📊 Case Presentation</div>
+    <div class="pres-nav-info">
+      <span id="pres-case-counter">1 / 18</span>
+      <button class="btn" id="pres-exit-btn" style="padding:.3rem .7rem;font-size:.68rem">✕ Exit</button>
+    </div>
+  </div>
+  <div class="pres-sheet-tabs" id="pres-sheet-tabs"></div>
+  <div class="pres-body">
+    <div class="pres-video-area">
+      <div class="pres-quadrant-label" id="pres-quadrant-badge">High GMV / High VV</div>
+      <div class="pres-video-card">
+        <div class="pres-video-header">
+          <span class="pres-case-label" id="pres-case-label">Case #1</span>
+          <span class="pres-case-type" id="pres-case-type">Standout</span>
+        </div>
+        <div class="pres-embed-container" id="pres-embed-container">
+          <div class="loading-placeholder"><div class="spinner"></div><span>Loading...</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="pres-data-panel">
+      <div class="pres-data-header">📈 Metrics</div>
+      <div class="pres-metrics" id="pres-metrics"></div>
+      <div class="pres-analysis" id="pres-analysis-section">
+        <div class="pres-analysis-label">📝 Analysis</div>
+        <div class="pres-analysis-text" id="pres-analysis-text">—</div>
+      </div>
+      <div id="pres-tag-groups-container" style="border-top:1px solid var(--border)"></div>
+      <div class="note-area" style="border-top:1px solid var(--border)">
+        <label>📝 Note</label>
+        <textarea id="pres-inline-note" placeholder="Jot down thoughts..."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="pres-controls">
+    <div class="ctrl-wrap"><button class="ctrl-btn" id="pres-prev-btn" title="Previous (←)" style="font-size:1rem">◀</button><span class="key-hint">←</span></div>
+    <span class="pres-page-info" id="pres-page-info">1 / 18</span>
+    <div class="ctrl-wrap"><button class="ctrl-btn" id="pres-next-btn" title="Next (→)" style="font-size:1rem">▶</button><span class="key-hint">→</span></div>
+  </div>
+</div>
+
 <script>
 (function(){
   const MAXE = 6;
@@ -398,7 +515,7 @@
   let tags = {};
   let tagConfig = [];
   let historyStack = [];
-  let activeMode = 'grouped';
+  let activeMode = 'flat';
   let projectName = '';
   let reviewMode = 'posts';
   let excelData = null;
@@ -438,6 +555,7 @@
     $('setup-phase').style.display = p === 'setup' ? 'flex' : 'none';
     $('review-phase').style.display = p === 'review' ? 'flex' : 'none';
     $('results-phase').style.display = p === 'results' ? 'flex' : 'none';
+    $('presenter-phase').style.display = p === 'presenter' ? 'flex' : 'none';
     if (p === 'setup') loadSavedProjects();
   }
 
@@ -582,12 +700,25 @@
       document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       reviewMode = btn.dataset.reviewMode;
+      const isPresenter = reviewMode === 'presenter';
       $('posts-inputs').style.display = reviewMode === 'posts' ? 'block' : 'none';
       $('profiles-inputs').style.display = reviewMode === 'profiles' ? 'block' : 'none';
+      $('presenter-inputs').style.display = isPresenter ? 'block' : 'none';
+      // Show/hide Load Creator Data header and section content vs presenter
+      $('section-load-data').querySelector('h2').textContent = isPresenter ? '' : '';
+      $('section-load-data').querySelector('h2').innerHTML = isPresenter
+        ? '<span class="step-num">1</span> Load Presentation Data'
+        : '<span class="step-num">1</span> Load Creator Data';
+      // Show/hide start buttons
+      $('start-btn').style.display = isPresenter ? 'none' : '';
+      $('start-presenter-btn').style.display = isPresenter ? '' : 'none';
       $('mode-hint').textContent = reviewMode === 'posts'
         ? 'Review individual posts (photos or videos) grouped by creator'
-        : 'Review creator profiles — see their bio, stats, and recent content';
+        : reviewMode === 'profiles'
+        ? 'Review creator profiles — see their bio, stats, and recent content'
+        : 'Present cases with video + data side-by-side for team meetings';
       updateParsedCount();
+      if (isPresenter) updatePresReady();
     });
   });
 
@@ -1115,6 +1246,289 @@
       if (e.target.tagName === 'IFRAME' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
       recoverFocus();
     });
+  });
+
+  // ── Presenter Mode ──
+  let presData = {};       // sheetName -> [{row data}]
+  let presSheets = [];     // sheet names
+  let presActiveSheet = '';
+  let presIdx = 0;
+  let presUrlCol = '';
+  let presAnalysisCol = '';
+  let presExcelRaw = null;
+  let presTags = {};       // "sheet:idx" -> {tagName: value}
+  let presNotes = {};      // "sheet:idx" -> string
+
+  // Presenter upload
+  const uploadAreaPres = $('upload-area-presenter');
+  const excelFilePres = $('excel-file-presenter');
+  uploadAreaPres.addEventListener('click', () => excelFilePres.click());
+  uploadAreaPres.addEventListener('dragover', e => { e.preventDefault(); uploadAreaPres.style.borderColor = 'var(--accent)'; });
+  uploadAreaPres.addEventListener('dragleave', () => { uploadAreaPres.style.borderColor = ''; });
+  uploadAreaPres.addEventListener('drop', e => { e.preventDefault(); uploadAreaPres.style.borderColor = ''; if (e.dataTransfer.files.length) handlePresFile(e.dataTransfer.files[0]); });
+  excelFilePres.addEventListener('change', () => { if (excelFilePres.files.length) handlePresFile(excelFilePres.files[0]); });
+
+  function handlePresFile(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'array' });
+        presExcelRaw = wb;
+        presSheets = wb.SheetNames;
+        presData = {};
+        presSheets.forEach(name => {
+          presData[name] = XLSX.utils.sheet_to_json(wb.Sheets[name]);
+        });
+        // Find the sheet with most rows that has URL-like data
+        uploadAreaPres.classList.add('has-file');
+        $('upload-file-info-presenter').textContent = `✓ ${file.name} — ${presSheets.length} sheets`;
+
+        // Populate column selects from first sheet with data
+        const firstDataSheet = presSheets.find(s => presData[s].length > 0) || presSheets[0];
+        const cols = presData[firstDataSheet].length ? Object.keys(presData[firstDataSheet][0]) : [];
+        const urlSel = $('pres-col-url');
+        const analysisSel = $('pres-col-analysis');
+        const quadrantSel = $('pres-col-quadrant');
+        urlSel.innerHTML = '<option value="">-- select --</option>' + cols.map(c => `<option value="${c}">${c}</option>`).join('');
+        analysisSel.innerHTML = '<option value="">(none)</option>' + cols.map(c => `<option value="${c}">${c}</option>`).join('');
+        quadrantSel.innerHTML = '<option value="">(none — use sheet name)</option>' + cols.map(c => `<option value="${c}">${c}</option>`).join('');
+
+        // Auto-detect
+        const urlGuess = cols.find(c => /url|link|video/i.test(c));
+        const analysisGuess = cols.find(c => /analysis|insight|note|comment|remark/i.test(c));
+        const quadrantGuess = cols.find(c => /title|quadrant|category|type|segment|group|label/i.test(c));
+        if (urlGuess) urlSel.value = urlGuess;
+        if (analysisGuess) analysisSel.value = analysisGuess;
+        if (quadrantGuess) quadrantSel.value = quadrantGuess;
+
+        // Auto-suggest highlight metrics (numeric-looking columns)
+        const numCols = cols.filter(c => {
+          if (c === urlGuess || c === analysisGuess || c === quadrantGuess) return false;
+          const val = presData[firstDataSheet][0][c];
+          return typeof val === 'number';
+        });
+        const defaultHighlights = numCols.filter(c => /gmv|vv|ctr|aov|gpm|order/i.test(c));
+        if (defaultHighlights.length && !$('pres-highlight-input').value) {
+          $('pres-highlight-input').value = defaultHighlights.join(', ');
+        }
+
+        $('pres-col-config').style.display = 'block';
+        updatePresReady();
+      } catch (err) {
+        $('upload-file-info-presenter').textContent = '⚠ Failed to parse file';
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  function updatePresReady() {
+    const hasUrl = !!$('pres-col-url').value;
+    $('start-presenter-btn').disabled = !hasUrl;
+    if (reviewMode === 'presenter' && presExcelRaw) {
+      const totalCases = Object.values(presData).reduce((s, rows) => s + rows.length, 0);
+      $('parsed-count').textContent = `${presSheets.length} sheets · ${totalCases} cases`;
+    }
+  }
+  $('pres-col-url').addEventListener('change', updatePresReady);
+
+  let presQuadrantCol = '';
+  let presHighlightKeys = new Set();
+
+  $('start-presenter-btn').addEventListener('click', () => {
+    presUrlCol = $('pres-col-url').value;
+    presAnalysisCol = $('pres-col-analysis').value;
+    presQuadrantCol = $('pres-col-quadrant').value;
+    // Parse highlight metrics from comma-separated input
+    const hlRaw = $('pres-highlight-input').value.trim();
+    presHighlightKeys = new Set(hlRaw ? hlRaw.split(',').map(s => s.trim()).filter(Boolean) : []);
+    if (!presUrlCol) return;
+    readTagConfig();
+    presIdx = 0;
+    const allSheets = Object.keys(presData).filter(s => presData[s].length > 0 && presData[s][0].hasOwnProperty(presUrlCol));
+    if (!allSheets.length) { alert('No sheets with the selected URL column found'); return; }
+    presSheets = allSheets;
+    presActiveSheet = presSheets[0];
+    presTags = {};
+    presNotes = {};
+    showPhase('presenter');
+    buildPresSheetTabs();
+    buildPresTagPanel();
+    loadPresCase(0);
+  });
+
+  function buildPresSheetTabs() {
+    const container = $('pres-sheet-tabs');
+    container.innerHTML = '';
+    presSheets.forEach(name => {
+      const tab = document.createElement('button');
+      tab.className = 'pres-sheet-tab' + (name === presActiveSheet ? ' active' : '');
+      tab.textContent = name + ' (' + presData[name].length + ')';
+      tab.addEventListener('click', () => {
+        presActiveSheet = name;
+        presIdx = 0;
+        container.querySelectorAll('.pres-sheet-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        loadPresCase(0);
+      });
+      container.appendChild(tab);
+    });
+  }
+
+  function presKey() { return presActiveSheet + ':' + presIdx; }
+
+  function buildPresTagPanel() {
+    const container = $('pres-tag-groups-container');
+    container.innerHTML = '';
+    if (!tagConfig.length) return;
+    tagConfig.forEach(tc => {
+      const group = document.createElement('div');
+      group.className = 'tag-group';
+      group.dataset.tagName = tc.name;
+      group.innerHTML = `<div class="tag-group-label">${tc.name}</div><div class="tag-options">${tc.options.map(o => `<div class="tag-option" data-value="${o}">${o}</div>`).join('')}</div>`;
+      group.querySelectorAll('.tag-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          const siblings = group.querySelectorAll('.tag-option');
+          const wasSelected = opt.classList.contains('selected');
+          siblings.forEach(s => s.classList.remove('selected'));
+          if (!wasSelected) opt.classList.add('selected');
+          savePresTagsForCurrent();
+        });
+      });
+      container.appendChild(group);
+    });
+  }
+
+  function savePresTagsForCurrent() {
+    const key = presKey();
+    const ct = {};
+    $('pres-tag-groups-container').querySelectorAll('.tag-group').forEach(group => {
+      const name = group.dataset.tagName;
+      const sel = group.querySelector('.tag-option.selected');
+      if (sel) ct[name] = sel.dataset.value;
+    });
+    presTags[key] = ct;
+    const noteVal = $('pres-inline-note').value.trim();
+    if (noteVal) presNotes[key] = noteVal; else delete presNotes[key];
+  }
+
+  function loadPresTagsForCurrent() {
+    const key = presKey();
+    const ct = presTags[key] || {};
+    $('pres-tag-groups-container').querySelectorAll('.tag-group').forEach(group => {
+      const name = group.dataset.tagName;
+      const val = ct[name];
+      group.querySelectorAll('.tag-option').forEach(opt => {
+        opt.classList.toggle('selected', opt.dataset.value === val);
+      });
+    });
+    $('pres-inline-note').value = presNotes[key] || '';
+  }
+
+  $('pres-inline-note').addEventListener('input', () => {
+    const key = presKey();
+    const v = $('pres-inline-note').value.trim();
+    if (v) presNotes[key] = v; else delete presNotes[key];
+  });
+
+  function loadPresCase(idx) {
+    // Save tags from current case before switching
+    if (presData[presActiveSheet] && presData[presActiveSheet].length) savePresTagsForCurrent();
+
+    const rows = presData[presActiveSheet];
+    if (!rows || !rows.length) return;
+    if (idx < 0) idx = 0;
+    if (idx >= rows.length) idx = rows.length - 1;
+    presIdx = idx;
+    const row = rows[idx];
+    const url = String(row[presUrlCol] || '').trim();
+    const vid = extractVideoId(url);
+
+    // Update counters
+    $('pres-case-counter').textContent = `${idx + 1} / ${rows.length}`;
+    $('pres-page-info').textContent = `${idx + 1} / ${rows.length}`;
+
+    // Case label
+    const caseType = row['Case Type'] || row['case_type'] || '';
+    const quadrant = presQuadrantCol ? (row[presQuadrantCol] || presActiveSheet) : presActiveSheet;
+    $('pres-case-label').textContent = `Case #${idx + 1}`;
+    $('pres-case-type').textContent = caseType;
+    $('pres-quadrant-badge').textContent = quadrant;
+    $('pres-quadrant-badge').style.display = quadrant ? '' : 'none';
+
+    // Embed
+    const container = $('pres-embed-container');
+    if (vid) {
+      container.innerHTML = `<div class="loading-placeholder" id="pres-ldr"><div class="spinner"></div><span>Loading embed...</span></div>
+        <iframe src="https://www.tiktok.com/embed/v2/${vid}" allow="autoplay; encrypted-media" allowfullscreen
+          style="display:none" onload="this.style.display='block';var l=document.getElementById('pres-ldr');if(l)l.style.display='none';"></iframe>`;
+    } else {
+      container.innerHTML = `<div class="loading-placeholder"><span>⚠ Cannot parse URL</span><a href="${url}" target="_blank" style="color:var(--accent);font-size:.72rem">Open link ↗</a></div>`;
+    }
+
+    // Metrics — show all non-skip columns
+    const metricsContainer = $('pres-metrics');
+    metricsContainer.innerHTML = '';
+    const skipCols = new Set([presUrlCol, presAnalysisCol, presQuadrantCol, 'Case Type', 'case_type', 'Quadrant', 'quadrant', '#', '__rowNum__', 'No', 'No.', 'Index']);
+    const entries = Object.entries(row).filter(([k]) => !skipCols.has(k));
+
+    entries.forEach(([key, val]) => {
+      if (val === null || val === undefined || val === '') return;
+      const isNum = typeof val === 'number' || (!isNaN(parseFloat(val)) && isFinite(val));
+      const isUrl = typeof val === 'string' && /https?:\/\//.test(val);
+      if (isUrl) return;
+
+      let displayVal = val;
+      if (isNum) {
+        const num = parseFloat(val);
+        if (key.toLowerCase().includes('gmv') || key.toLowerCase().includes('aov')) {
+          displayVal = '$' + num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        } else if (key.toLowerCase().includes('ctr') || key.toLowerCase().includes('rate')) {
+          displayVal = num.toFixed(2) + '%';
+        } else if (num >= 1000) {
+          displayVal = num.toLocaleString();
+        } else {
+          displayVal = num.toFixed(2).replace(/\.?0+$/, '') || '0';
+        }
+      }
+
+      const isHighlight = presHighlightKeys.has(key);
+      const div = document.createElement('div');
+      div.className = 'pres-metric' + (isHighlight ? ' highlight' : '');
+      div.innerHTML = `<span class="metric-val">${displayVal}</span><span class="metric-label">${key}</span>`;
+      metricsContainer.appendChild(div);
+    });
+
+    // Analysis
+    const analysisSection = $('pres-analysis-section');
+    const analysisText = $('pres-analysis-text');
+    if (presAnalysisCol && row[presAnalysisCol]) {
+      analysisSection.style.display = 'flex';
+      analysisText.textContent = String(row[presAnalysisCol]);
+    } else {
+      analysisSection.style.display = 'none';
+    }
+
+    loadPresTagsForCurrent();
+    recoverFocus();
+  }
+  $('pres-prev-btn').addEventListener('click', () => loadPresCase(presIdx - 1));
+  $('pres-next-btn').addEventListener('click', () => loadPresCase(presIdx + 1));
+  $('pres-exit-btn').addEventListener('click', () => showPhase('setup'));
+
+  // Presenter keyboard
+  document.addEventListener('keydown', e => {
+    if ($('presenter-phase').style.display !== 'flex') return;
+    const focused = document.activeElement;
+    if (focused && (focused.tagName === 'TEXTAREA' || focused.tagName === 'INPUT')) return;
+    if (e.key === 'ArrowRight') { e.preventDefault(); loadPresCase(presIdx + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); loadPresCase(presIdx - 1); }
+    else if (e.key === 'Escape') { e.preventDefault(); showPhase('setup'); }
+  });
+
+  // Presenter focus recovery
+  $('presenter-phase').addEventListener('click', e => {
+    if (e.target.tagName === 'IFRAME' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+    recoverFocus();
   });
 
   showPhase('setup');
