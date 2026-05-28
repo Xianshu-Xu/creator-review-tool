@@ -192,12 +192,12 @@
   .pres-embed-container{flex:1;background:var(--bg);min-height:0}
   .pres-embed-container iframe{width:100%;height:100%;border:none}
   .pres-embed-container .loading-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--text-dim);font-size:.8rem;gap:.5rem}
-  .pres-data-panel{width:380px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+  .pres-data-panel{width:380px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
   .pres-data-header{padding:.8rem 1.2rem;font-size:.85rem;font-weight:500;border-bottom:1px solid var(--border);color:var(--accent-light);letter-spacing:.3px}
   .pres-metrics{padding:1rem 1.2rem;display:grid;grid-template-columns:1fr 1fr;gap:.6rem}
   .pres-metric{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:.7rem .8rem;display:flex;flex-direction:column;gap:.2rem}
-  .pres-metric .metric-val{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:600;color:#fff}
-  .pres-metric .metric-label{font-size:.65rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase}
+  .pres-metric .metric-val{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pres-metric .metric-label{font-size:.65rem;color:var(--text-dim);font-family:'JetBrains Mono',monospace;letter-spacing:.5px;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .pres-metric.highlight{border-color:var(--accent-dim);background:var(--accent-bg)}
   .pres-metric.highlight .metric-val{color:var(--accent-light)}
   .pres-analysis{padding:1rem 1.2rem;flex:1;display:flex;flex-direction:column;border-top:1px solid var(--border)}
@@ -1277,7 +1277,7 @@
         presSheets = wb.SheetNames;
         presData = {};
         presSheets.forEach(name => {
-          presData[name] = XLSX.utils.sheet_to_json(wb.Sheets[name]);
+          presData[name] = XLSX.utils.sheet_to_json(wb.Sheets[name], { raw: false });
         });
         // Find the sheet with most rows that has URL-like data
         uploadAreaPres.classList.add('has-file');
@@ -1478,18 +1478,7 @@
       if (isUrl) return;
 
       let displayVal = val;
-      if (isNum) {
-        const num = parseFloat(val);
-        if (key.toLowerCase().includes('gmv') || key.toLowerCase().includes('aov')) {
-          displayVal = '$' + num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        } else if (key.toLowerCase().includes('ctr') || key.toLowerCase().includes('rate')) {
-          displayVal = num.toFixed(2) + '%';
-        } else if (num >= 1000) {
-          displayVal = num.toLocaleString();
-        } else {
-          displayVal = num.toFixed(2).replace(/\.?0+$/, '') || '0';
-        }
-      }
+      // No formatting needed — values come pre-formatted from Excel (raw: false)
 
       const isHighlight = presHighlightKeys.has(key);
       const div = document.createElement('div');
@@ -1497,6 +1486,29 @@
       div.innerHTML = `<span class="metric-val">${displayVal}</span><span class="metric-label">${key}</span>`;
       metricsContainer.appendChild(div);
     });
+
+    // Dynamic sizing: shrink metric cards when there are many
+    const metricCount = metricsContainer.children.length;
+    if (metricCount > 10) {
+      metricsContainer.style.gap = '.3rem';
+      metricsContainer.style.padding = '.5rem .8rem';
+      metricsContainer.querySelectorAll('.pres-metric').forEach(el => {
+        el.style.padding = '.3rem .5rem';
+        el.querySelector('.metric-val').style.fontSize = '.75rem';
+        el.querySelector('.metric-label').style.fontSize = '.55rem';
+      });
+    } else if (metricCount > 6) {
+      metricsContainer.style.gap = '.4rem';
+      metricsContainer.style.padding = '.6rem 1rem';
+      metricsContainer.querySelectorAll('.pres-metric').forEach(el => {
+        el.style.padding = '.45rem .6rem';
+        el.querySelector('.metric-val').style.fontSize = '.85rem';
+        el.querySelector('.metric-label').style.fontSize = '.58rem';
+      });
+    } else {
+      metricsContainer.style.gap = '';
+      metricsContainer.style.padding = '';
+    }
 
     // Analysis
     const analysisSection = $('pres-analysis-section');
