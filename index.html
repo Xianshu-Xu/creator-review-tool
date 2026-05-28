@@ -465,6 +465,8 @@
     <div class="pres-title" id="pres-title">📊 Case Presentation</div>
     <div class="pres-nav-info">
       <span id="pres-case-counter">1 / 18</span>
+      <button class="btn" id="pres-export-csv-btn" style="padding:.3rem .7rem;font-size:.68rem">📤 CSV</button>
+      <button class="btn" id="pres-export-json-btn" style="padding:.3rem .7rem;font-size:.68rem">📤 JSON</button>
       <button class="btn" id="pres-exit-btn" style="padding:.3rem .7rem;font-size:.68rem">✕ Exit</button>
     </div>
   </div>
@@ -1525,7 +1527,59 @@
   }
   $('pres-prev-btn').addEventListener('click', () => loadPresCase(presIdx - 1));
   $('pres-next-btn').addEventListener('click', () => loadPresCase(presIdx + 1));
-  $('pres-exit-btn').addEventListener('click', () => showPhase('setup'));
+  $('pres-exit-btn').addEventListener('click', () => { savePresTagsForCurrent(); showPhase('setup'); });
+
+  // Presenter CSV export
+  $('pres-export-csv-btn').addEventListener('click', () => {
+    savePresTagsForCurrent();
+    const tagNames = tagConfig.map(t => t.name);
+    let csv = '';
+    presSheets.forEach(sheet => {
+      const rows = presData[sheet];
+      if (!rows || !rows.length) return;
+      // Build header from first row + tag columns + Note
+      if (!csv) {
+        const origCols = Object.keys(rows[0]);
+        csv = origCols.map(c => `"${c}"`).join(',') + ',' + tagNames.map(n => `"${n}"`).join(',') + ',"Note","Sheet"\n';
+      }
+      rows.forEach((row, idx) => {
+        const key = sheet + ':' + idx;
+        const origCols = Object.keys(rows[0]);
+        const vals = origCols.map(c => `"${String(row[c] || '').replace(/"/g, '""')}"`).join(',');
+        const tagVals = tagNames.map(n => `"${(presTags[key] || {})[n] || ''}"`).join(',');
+        const note = (presNotes[key] || '').replace(/"/g, '""');
+        csv += vals + ',' + tagVals + ',"' + note + '","' + sheet + '"\n';
+      });
+    });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'presentation_export.csv';
+    a.click();
+  });
+
+  // Presenter JSON export
+  $('pres-export-json-btn').addEventListener('click', () => {
+    savePresTagsForCurrent();
+    const data = {
+      type: 'presenter',
+      sheets: presSheets,
+      data: presData,
+      tags: presTags,
+      notes: presNotes,
+      tagConfig,
+      urlCol: presUrlCol,
+      analysisCol: presAnalysisCol,
+      quadrantCol: presQuadrantCol,
+      highlightKeys: [...presHighlightKeys],
+      activeSheet: presActiveSheet,
+      currentIdx: presIdx,
+      savedAt: new Date().toISOString()
+    };
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+    a.download = 'presentation_progress.json';
+    a.click();
+  });
 
   // Presenter keyboard
   document.addEventListener('keydown', e => {
